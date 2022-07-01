@@ -24,8 +24,10 @@ locals {
 
   # Services and Applications
   config_autoscaler = var.config_autoscaler
+
   config_flux = defaults(var.config_flux, {
-    install = local.cluster.install,
+    install        = local.cluster.install,
+    create_ssh_key = true,
   })
 
   config_velero = defaults(var.config_velero, {
