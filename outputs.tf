@@ -15,7 +15,7 @@ output "cluster" {
 }
 
 output "velero_storage" {
-  value       = local.velero.install ? module.velero[0].s3 : null
+  value       = local.config_velero.install ? module.velero[0].s3 : null
   description = "S3 object with `id` and `arn` for velero storage bucket. If velero isn't used, will be null"
 }
 
