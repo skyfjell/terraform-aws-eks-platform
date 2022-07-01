@@ -43,13 +43,13 @@ module "cluster" {
 
   manage_aws_auth_configmap = local.cluster.install
 
-  aws_auth_roles = concat(
+  aws_auth_roles = flatten(concat(
     [
       module.platform_edit_iam[*].aws_auth_role,
       module.platform_view_iam[*].aws_auth_role,
     ],
     local.cluster.aws_auth_roles
-  )
+  ))
 
   tags = merge(
     local.labels.tags,
