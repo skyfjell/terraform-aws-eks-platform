@@ -6,11 +6,17 @@ module "flux_install" {
   count = local.install_flux ? 1 : 0
 
   source  = "skyfjell/install/flux"
-  version = "1.0.1"
+  version = "1.0.2"
 
-  flux_version = "v0.30.2"
-  name         = local.labels.id
-  tolerations  = ["system-platform"]
+  name = local.labels.id
+
+  tolerations = [
+    {
+      key      = "system-platform"
+      operator = "Exists"
+      effect   = "NoSchedule"
+    }
+  ]
 
   depends_on = [
     helm_release.karpenter
