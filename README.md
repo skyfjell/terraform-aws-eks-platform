@@ -18,9 +18,9 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.20.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.21.0 |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | 2.6.0 |
-| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.11.0 |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.12.0 |
 
 ## Modules
 
@@ -28,7 +28,7 @@
 |------|--------|---------|
 | <a name="module_cluster"></a> [cluster](#module\_cluster) | terraform-aws-modules/eks/aws | 18.26.1 |
 | <a name="module_flux_git_repository"></a> [flux\_git\_repository](#module\_flux\_git\_repository) | skyfjell/git-repository/flux | 1.0.1 |
-| <a name="module_flux_install"></a> [flux\_install](#module\_flux\_install) | skyfjell/install/flux | 1.0.1 |
+| <a name="module_flux_install"></a> [flux\_install](#module\_flux\_install) | skyfjell/install/flux | 1.0.2 |
 | <a name="module_flux_kustomization"></a> [flux\_kustomization](#module\_flux\_kustomization) | skyfjell/kustomization/flux | 1.0.1 |
 | <a name="module_karpenter_irsa"></a> [karpenter\_irsa](#module\_karpenter\_irsa) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.0.0 |
 | <a name="module_platform_edit_iam"></a> [platform\_edit\_iam](#module\_platform\_edit\_iam) | ./modules/cluster-iam | n/a |
@@ -69,14 +69,15 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_autoscaler"></a> [autoscaler](#input\_autoscaler) | Cluster Autoscaler Configuration | <pre>object({<br>    enable_service_account = bool<br>    namespace              = string<br>  })</pre> | <pre>{<br>  "enable_service_account": false,<br>  "namespace": "autoscaler"<br>}</pre> | no |
-| <a name="input_cluster"></a> [cluster](#input\_cluster) | Cluster Configuration | <pre>object({<br>    install   = bool<br>    karpenter = bool<br>    version   = string<br>    aws_auth_roles = optional(list(object({<br>      username = string,<br>      rolearn  = string,<br>      groups   = list(string),<br>    })))<br>    subnet_ids = list(string)<br>    vpc_id     = string<br>  })</pre> | n/a | yes |
+| <a name="input_cluster"></a> [cluster](#input\_cluster) | Cluster Configuration | <pre>object({<br>    install = bool<br>    version = string<br>    aws_auth_roles = optional(list(object({<br>      username = string,<br>      rolearn  = string,<br>      groups   = list(string),<br>    })))<br>    subnet_ids = list(string)<br>    vpc_id     = string<br>  })</pre> | n/a | yes |
+| <a name="input_config_autoscaler"></a> [config\_autoscaler](#input\_config\_autoscaler) | Cluster Autoscaler Configuration | <pre>object({<br>    enable_service_account = bool<br>    namespace              = string<br>  })</pre> | <pre>{<br>  "enable_service_account": false,<br>  "namespace": "autoscaler"<br>}</pre> | no |
+| <a name="input_config_flux"></a> [config\_flux](#input\_config\_flux) | Flux Configuration | <pre>object({<br>    install = bool<br>    git = object({<br>      name            = string,<br>      url             = string,<br>      path            = string,<br>      known_hosts     = list(string)<br>      create_ssh_key  = optional(bool)<br>      existing_secret = optional(string)<br>      ref = object({<br>        branch = optional(string)<br>        commit = optional(string)<br>        tag    = optional(string)<br>        semver = optional(string)<br>      }),<br>    })<br>  })</pre> | n/a | yes |
+| <a name="input_config_karpenter"></a> [config\_karpenter](#input\_config\_karpenter) | Karpenter Configuration | <pre>object({<br>    install = bool<br>  })</pre> | <pre>{<br>  "install": true<br>}</pre> | no |
+| <a name="input_config_velero"></a> [config\_velero](#input\_config\_velero) | Velero Configuration | <pre>object({<br>    install          = optional(bool)<br>    version          = optional(string)<br>    bucket           = optional(string)<br>    service_accounts = optional(list(string))<br>  })</pre> | <pre>{<br>  "install": true,<br>  "version": "2.30.1"<br>}</pre> | no |
 | <a name="input_domain_zones"></a> [domain\_zones](#input\_domain\_zones) | ExternalDNS Managed Domains | <pre>list(object(<br>    {<br>      zone_id = string<br>      domain  = string<br>    }<br>  ))</pre> | `[]` | no |
-| <a name="input_flux"></a> [flux](#input\_flux) | Flux Configuration | <pre>object({<br>    install = bool<br>    git = object({<br>      name            = string,<br>      url             = string,<br>      path            = string,<br>      known_hosts     = list(string)<br>      create_ssh_key  = optional(bool)<br>      existing_secret = optional(string)<br>      ref = object({<br>        branch = optional(string)<br>        commit = optional(string)<br>        tag    = optional(string)<br>        semver = optional(string)<br>      }),<br>    })<br>  })</pre> | n/a | yes |
 | <a name="input_labels"></a> [labels](#input\_labels) | Instance of labels module | <pre>object(<br>    {<br>      id   = string<br>      tags = any<br>    }<br>  )</pre> | n/a | yes |
 | <a name="input_managed_node_groups"></a> [managed\_node\_groups](#input\_managed\_node\_groups) | EKS Managed Node Groups | `map(object({}))` | `{}` | no |
 | <a name="input_users"></a> [users](#input\_users) | Map of lists of user ARNs | <pre>object({<br>    edit = optional(list(string)),<br>    view = optional(list(string)),<br>  })</pre> | n/a | yes |
-| <a name="input_velero"></a> [velero](#input\_velero) | Velero Configuration | <pre>object({<br>    install          = bool<br>    version          = string<br>    bucket           = optional(string)<br>    service_accounts = optional(list(string))<br>  })</pre> | <pre>{<br>  "install": false,<br>  "version": "2.30.1"<br>}</pre> | no |
 
 ## Outputs
 

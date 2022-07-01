@@ -22,7 +22,7 @@ data "aws_iam_policy_document" "this_assume_policy_doc" {
 }
 
 resource "aws_iam_role" "this" {
-  name                 = "${local.name}-${local.labels.id}"
+  name                 = "${local.labels.id}-${local.name}"
   assume_role_policy   = data.aws_iam_policy_document.this_assume_policy_doc.json
   max_session_duration = local.max_session_duration
   tags                 = local.labels.tags
@@ -44,7 +44,7 @@ data "aws_iam_policy_document" "this_action" {
 resource "aws_iam_policy" "this_action_policy" {
   count = local.attach ? 1 : 0
 
-  name   = "action-${local.name}-${local.labels.id}"
+  name   = "${local.labels.id}-${local.name}-action"
   policy = data.aws_iam_policy_document.this_action[0].json
   tags   = local.labels.tags
 }
@@ -61,13 +61,13 @@ resource "aws_iam_role_policy_attachment" "this" {
 *************************/
 
 resource "aws_iam_group" "this" {
-  name = "${local.name}-${local.labels.id}"
+  name = "${local.labels.id}-${local.name}"
 }
 
 resource "aws_iam_group_membership" "this" {
   //checkov:skip=CKV2_AWS_21:Only running on File not planned
   //checkov:skip=CKV2_AWS_14:Only running on File not planned
-  name  = "${local.name}-${local.labels.id}"
+  name  = "${local.labels.id}-${local.name}"
   group = aws_iam_group.this.id
   users = sort([for user in local.user_arns : replace(user, "/^[^/]+//", "")])
 }
@@ -84,7 +84,7 @@ data "aws_iam_policy_document" "this" {
 }
 
 resource "aws_iam_policy" "this" {
-  name   = "assume-${local.name}-${local.labels.id}"
+  name   = "${local.labels.id}-${local.name}-assume"
   policy = data.aws_iam_policy_document.this.json
   tags   = local.labels.tags
 }

@@ -21,9 +21,8 @@ variable "cluster" {
   description = "Cluster Configuration"
 
   type = object({
-    install   = bool
-    karpenter = bool
-    version   = string
+    install = bool
+    version = string
     aws_auth_roles = optional(list(object({
       username = string,
       rolearn  = string,
@@ -40,7 +39,20 @@ variable "managed_node_groups" {
   default     = {}
 }
 
-variable "autoscaler" {
+variable "domain_zones" {
+  description = "ExternalDNS Managed Domains"
+
+  type = list(object(
+    {
+      zone_id = string
+      domain  = string
+    }
+  ))
+
+  default = []
+}
+
+variable "config_autoscaler" {
   description = "Cluster Autoscaler Configuration"
   type = object({
     enable_service_account = bool
@@ -53,7 +65,7 @@ variable "autoscaler" {
   }
 }
 
-variable "flux" {
+variable "config_flux" {
   description = "Flux Configuration"
 
   type = object({
@@ -75,31 +87,29 @@ variable "flux" {
   })
 }
 
-variable "velero" {
+variable "config_velero" {
   description = "Velero Configuration"
 
   type = object({
-    install          = bool
-    version          = string
+    install          = optional(bool)
+    version          = optional(string)
     bucket           = optional(string)
     service_accounts = optional(list(string))
   })
 
   default = {
-    install = false
+    install = true
     version = "2.30.1"
   }
 }
+variable "config_karpenter" {
+  description = "Karpenter Configuration"
 
-variable "domain_zones" {
-  description = "ExternalDNS Managed Domains"
+  type = object({
+    install = bool
+  })
 
-  type = list(object(
-    {
-      zone_id = string
-      domain  = string
-    }
-  ))
-
-  default = []
+  default = {
+    install = true
+  }
 }

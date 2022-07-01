@@ -15,13 +15,13 @@ output "cluster" {
 }
 
 output "velero_storage" {
-  value       = local.velero.install ? module.velero[0].s3 : null
+  value       = local.config_velero.install ? module.velero[0].s3 : null
   description = "S3 object with `id` and `arn` for velero storage bucket. If velero isn't used, will be null"
 }
 
 output "cluster_roles" {
   value = local.cluster.install ? {
-    edit = module.platform_edit_iam.role.arn
-    view = module.platform_view_iam.role.arn
+    edit = one(module.platform_edit_iam[*].role.arn)
+    view = one(module.platform_view_iam[*].role.arn)
   } : {}
 }

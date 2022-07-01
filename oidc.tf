@@ -30,7 +30,7 @@ data "aws_iam_policy_document" "eks_assume_role_policy" {
 // Roles
 
 resource "aws_iam_role" "eks_oidc_role" {
-  name_prefix        = "eks_oidc_role"
+  name_prefix        = "${local.labels.id}-eks-oidc"
   assume_role_policy = data.aws_iam_policy_document.eks_assume_role_policy.json
 }
 
