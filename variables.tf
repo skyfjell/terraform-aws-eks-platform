@@ -91,8 +91,8 @@ variable "config_velero" {
   description = "Velero Configuration"
 
   type = object({
-    install          = bool
-    version          = string
+    install          = optional(bool)
+    version          = optional(string)
     bucket           = optional(string)
     service_accounts = optional(list(string))
   })
