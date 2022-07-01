@@ -21,7 +21,7 @@ output "velero_storage" {
 
 output "cluster_roles" {
   value = local.cluster.install ? {
-    edit = module.platform_edit_iam.role.arn
-    view = module.platform_view_iam.role.arn
+    edit = one(module.platform_edit_iam[*].role.arn)
+    view = one(module.platform_view_iam[*].role.arn)
   } : {}
 }

@@ -45,8 +45,8 @@ module "cluster" {
 
   aws_auth_roles = concat(
     [
-      module.platform_edit_iam.aws_auth_role,
-      module.platform_view_iam.aws_auth_role,
+      module.platform_edit_iam[*].aws_auth_role,
+      module.platform_view_iam[*].aws_auth_role,
     ],
     local.cluster.aws_auth_roles
   )
