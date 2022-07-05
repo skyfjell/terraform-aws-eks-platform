@@ -1,5 +1,5 @@
 resource "aws_iam_instance_profile" "karpenter" {
-  count = local.cluster.install && local.cluster.karpenter ? 1 : 0
+  count = local.cluster.install && local.config_karpenter.install ? 1 : 0
 
   name = "KarpenterNodeInstanceProfile-${local.labels.id}"
   role = module.cluster.eks_managed_node_groups["default"].iam_role_name
@@ -7,7 +7,7 @@ resource "aws_iam_instance_profile" "karpenter" {
 }
 
 module "karpenter_irsa" {
-  count = local.cluster.install && local.cluster.karpenter ? 1 : 0
+  count = local.cluster.install && local.config_karpenter.install ? 1 : 0
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.0.0"
@@ -33,7 +33,7 @@ module "karpenter_irsa" {
 }
 
 resource "helm_release" "karpenter" {
-  count = local.cluster.install && local.cluster.karpenter ? 1 : 0
+  count = local.cluster.install && local.config_karpenter.install ? 1 : 0
 
   namespace        = "karpenter"
   create_namespace = true

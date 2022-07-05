@@ -1,16 +1,22 @@
 locals {
-  install_flux = local.cluster.install && local.flux.install
+  install_flux = local.cluster.install && local.config_flux.install
 }
 
 module "flux_install" {
   count = local.install_flux ? 1 : 0
 
   source  = "skyfjell/install/flux"
-  version = "1.0.1"
+  version = "1.0.2"
 
-  flux_version = "v0.30.2"
-  name         = local.labels.id
-  tolerations  = ["system-platform"]
+  name = local.labels.id
+
+  tolerations = [
+    {
+      key      = "system-platform"
+      operator = "Exists"
+      effect   = "NoSchedule"
+    }
+  ]
 
   depends_on = [
     helm_release.karpenter
@@ -23,13 +29,13 @@ module "flux_git_repository" {
   source  = "skyfjell/git-repository/flux"
   version = "1.0.1"
 
-  url             = local.flux.git.url
+  url             = local.config_flux.git.url
   interval        = "1m"
-  known_hosts     = local.flux.git.known_hosts
-  ref             = local.flux.git.ref
-  name            = local.flux.git.name
-  create_ssh_key  = local.flux.git.create_ssh_key
-  existing_secret = local.flux.git.existing_secret
+  known_hosts     = local.config_flux.git.known_hosts
+  ref             = local.config_flux.git.ref
+  name            = local.config_flux.git.name
+  create_ssh_key  = local.config_flux.git.create_ssh_key
+  existing_secret = local.config_flux.git.existing_secret
 
   depends_on = [module.flux_install]
 }
@@ -41,8 +47,8 @@ module "flux_kustomization" {
   version = "1.0.1"
 
 
-  name = local.flux.git.name
-  path = local.flux.git.path
+  name = local.config_flux.git.name
+  path = local.config_flux.git.path
 
   source_ref = {
     name = module.flux_git_repository[0].name

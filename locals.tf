@@ -10,8 +10,7 @@ locals {
 
   # Cluster Config
   cluster = defaults(var.cluster, {
-    install   = true,
-    karpenter = true
+    install = true,
   })
   managed_node_groups = var.managed_node_groups
   cluster_id          = module.cluster.cluster_id
@@ -24,14 +23,22 @@ locals {
   domain_zones = var.domain_zones
 
   # Services and Applications
-  autoscaler = var.autoscaler
-  flux = defaults(var.flux, {
+  config_autoscaler = var.config_autoscaler
+
+  config_flux = defaults(var.config_flux, {
     install = local.cluster.install,
+    git = {
+      create_ssh_key = true,
+    }
   })
 
-  velero = defaults(var.velero, {
+  config_velero = defaults(var.config_velero, {
     install = local.cluster.install,
     version = "2.30.1"
+  })
+
+  config_karpenter = defaults(var.config_karpenter, {
+    install = local.cluster.install,
   })
 
   partition = data.aws_partition.current.partition

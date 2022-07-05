@@ -156,7 +156,7 @@ locals {
 
 # TODO: Refactor to use proper kubernetes_[resource] resources.
 resource "helm_release" "rbac" {
-  count      = local.cluster.install && local.cluster.karpenter ? 1 : 0
+  count      = local.cluster.install && local.config_karpenter.install ? 1 : 0
   name       = "rbac"
   repository = "https://skyfjell.github.io/charts"
   chart      = "null"

@@ -1,5 +1,5 @@
 resource "aws_iam_role" "autoscaler" {
-  count = local.autoscaler.enable_service_account ? 1 : 0
+  count = local.config_autoscaler.enable_service_account ? 1 : 0
 
   name_prefix        = join("-", ["${local.labels.id}", "eks_autoscaler"])
   assume_role_policy = data.aws_iam_policy_document.autoscaler_assume.json
@@ -81,7 +81,7 @@ data "aws_iam_policy_document" "autoscaler" {
 }
 
 resource "aws_iam_policy" "autoscaler" {
-  count = local.autoscaler.enable_service_account ? 1 : 0
+  count = local.config_autoscaler.enable_service_account ? 1 : 0
 
   name_prefix = join("-", ["${local.labels.id}", "eks_autoscaler"])
   path        = "/"
@@ -92,16 +92,16 @@ resource "aws_iam_policy" "autoscaler" {
 }
 
 resource "aws_iam_role_policy_attachment" "autoscaler" {
-  count = local.autoscaler.enable_service_account ? 1 : 0
+  count = local.config_autoscaler.enable_service_account ? 1 : 0
 
   role       = aws_iam_role.autoscaler[0].name
   policy_arn = aws_iam_policy.autoscaler[0].arn
 }
 
 resource "kubernetes_namespace" "autoscaler" {
-  count = local.autoscaler.enable_service_account ? 1 : 0
+  count = local.config_autoscaler.enable_service_account ? 1 : 0
   metadata {
-    name = local.autoscaler.namespace
+    name = local.config_autoscaler.namespace
     labels = {
       "app.kubernetes.io/managed-by"          = "Terraform"
       "app.kubernetes.io/created-by"          = "terraform-aws-eks-platform/autoscaler.tf"
@@ -113,10 +113,10 @@ resource "kubernetes_namespace" "autoscaler" {
 }
 
 resource "kubernetes_service_account" "autoscaler" {
-  count = local.autoscaler.enable_service_account ? 1 : 0
+  count = local.config_autoscaler.enable_service_account ? 1 : 0
   metadata {
     name      = "autoscaler"
-    namespace = local.autoscaler.namespace
+    namespace = local.config_autoscaler.namespace
     annotations = {
       "eks.amazonaws.com/role-arn" : aws_iam_role.autoscaler[0].arn
     }
