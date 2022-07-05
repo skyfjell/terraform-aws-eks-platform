@@ -4,6 +4,11 @@ resource "aws_iam_instance_profile" "karpenter" {
   name = "KarpenterNodeInstanceProfile-${local.labels.id}"
   role = module.cluster.eks_managed_node_groups["default"].iam_role_name
 
+  provisioner "local-exec" {
+    when    = destroy
+    command = "kubectl delete nodes -l karpenter.sh/provisioner-name"
+  }
+
 }
 
 module "karpenter_irsa" {
@@ -27,9 +32,8 @@ module "karpenter_irsa" {
     }
   }
 
-  depends_on = [
-    module.cluster.aws_auth_configmap_yaml
-  ]
+
+
 }
 
 resource "helm_release" "karpenter" {
@@ -69,5 +73,7 @@ resource "helm_release" "karpenter" {
       operator = "Exists"
     }]
   })]
+
+
 
 }
