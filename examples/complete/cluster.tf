@@ -20,13 +20,16 @@ module "example-complete" {
 
   cluster = {
     install    = local.cluster.install
-    karpenter  = local.cluster.karpenter
     version    = "1.22"
     subnet_ids = local.subnet_ids
     vpc_id     = module.vpc.vpc_id
   }
 
-  flux = {
+  config_karpenter = {
+    install = true
+  }
+
+  config_flux = {
     install = false
     git = {
       url  = "ssh://git@github.com/skyfjell/examples.git"
@@ -46,7 +49,7 @@ module "example-complete" {
     view = [aws_iam_user.test_view.arn]
   }
 
-  velero = {
+  config_velero = {
     install = false
     version = "2.29.5"
   }

@@ -1,4 +1,6 @@
 module "platform_view_iam" {
+  count = length(local.users.view) > 0 ? 1 : 0
+
   source = "./modules/cluster-iam"
 
   labels      = local.labels
@@ -7,10 +9,11 @@ module "platform_view_iam" {
   actions     = ["eks:DescribeCluster"]
   cluster_arn = module.cluster.cluster_arn
   attach      = local.cluster.install
-
 }
 
 module "platform_edit_iam" {
+  count = length(local.users.edit) > 0 ? 1 : 0
+
   source = "./modules/cluster-iam"
 
   labels      = local.labels
@@ -19,7 +22,4 @@ module "platform_edit_iam" {
   actions     = ["eks:*"]
   cluster_arn = module.cluster.cluster_arn
   attach      = local.cluster.install
-
 }
-
-
