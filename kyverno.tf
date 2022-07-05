@@ -46,6 +46,19 @@ locals {
               },
             ]
           }
+          "exclude" = {
+            "any" = [
+              {
+                "resources" = {
+                  "selector" = {
+                    "matchLabels" = {
+                      "app.kubernetes.io/name" = "karpenter"
+                    }
+                  }
+                }
+              },
+            ]
+          }
           "name" = "require-pod-node-selector"
           "validate" = {
             "message" = "nodeSelector is required"
