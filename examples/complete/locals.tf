@@ -12,10 +12,11 @@ locals {
     groups = [for y in x.groups : y if contains(local.valid_groups, y)]
   }]
   groups = [for x in var.groups : { name = x.name }]
+
 }
 
 locals {
-  cluster   = { install = true }
+  cluster   = { install = false }
   karpenter = { install = false }
   flux      = { install = false }
 }

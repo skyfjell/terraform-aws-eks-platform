@@ -1,13 +1,24 @@
+resource "null_resource" "tear_down" {
+  count = local.cluster.install && local.config_karpenter.install ? 1 : 0
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "kubectl delete nodes -l karpenter.sh/provisioner-name"
+  }
+
+  depends_on = [
+    module.karpenter_irsa
+  ]
+}
+
+
 resource "aws_iam_instance_profile" "karpenter" {
   count = local.cluster.install && local.config_karpenter.install ? 1 : 0
 
   name = "KarpenterNodeInstanceProfile-${local.labels.id}"
   role = module.cluster.eks_managed_node_groups["default"].iam_role_name
 
-  provisioner "local-exec" {
-    when    = destroy
-    command = "kubectl delete nodes -l karpenter.sh/provisioner-name"
-  }
+
 }
 
 module "karpenter_irsa" {
@@ -34,7 +45,6 @@ module "karpenter_irsa" {
   depends_on = [
     aws_iam_instance_profile.karpenter
   ]
-
 }
 
 resource "helm_release" "karpenter" {
@@ -75,6 +85,7 @@ resource "helm_release" "karpenter" {
     }]
   })]
 
-
-
+  depends_on = [
+    module.karpenter_irsa
+  ]
 }
