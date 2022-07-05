@@ -49,6 +49,5 @@ resource "helm_release" "karpenter_provisioners" {
 
   depends_on = [
     helm_release.karpenter,
-    module.cluster.aws_auth_configmap_yaml
   ]
 }

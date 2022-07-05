@@ -8,7 +8,6 @@ resource "aws_iam_instance_profile" "karpenter" {
     when    = destroy
     command = "kubectl delete nodes -l karpenter.sh/provisioner-name"
   }
-
 }
 
 module "karpenter_irsa" {
@@ -32,7 +31,9 @@ module "karpenter_irsa" {
     }
   }
 
-
+  depends_on = [
+    aws_iam_instance_profile.karpenter
+  ]
 
 }
 

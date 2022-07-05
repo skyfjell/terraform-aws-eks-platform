@@ -26,11 +26,11 @@ module "example-complete" {
   }
 
   config_karpenter = {
-    install = true
+    install = local.karpenter.install
   }
 
   config_flux = {
-    install = false
+    install = local.flux.install
     git = {
       url  = "ssh://git@github.com/skyfjell/examples.git"
       path = "clusters/ex-stage"

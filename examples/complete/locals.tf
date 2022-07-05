@@ -15,10 +15,9 @@ locals {
 }
 
 locals {
-  cluster = {
-    install   = false
-    karpenter = false
-  }
+  cluster   = { install = true }
+  karpenter = { install = false }
+  flux      = { install = false }
 }
 
 locals {
