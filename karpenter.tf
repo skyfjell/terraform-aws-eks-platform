@@ -17,8 +17,6 @@ resource "aws_iam_instance_profile" "karpenter" {
 
   name = "KarpenterNodeInstanceProfile-${local.labels.id}"
   role = module.cluster.eks_managed_node_groups["default"].iam_role_name
-
-
 }
 
 module "karpenter_irsa" {
