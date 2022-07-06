@@ -1,5 +1,14 @@
 # Terraform AWS EKS Platform Module
 
+Gracefully set up(and tear down) EKS clusters with optional enhancements such as [Karpenter](https://karpenter.sh/)(Node Automation), [Flux](https://fluxcd.io/)(GitOps CD), [Velero](https://velero.io/)(Backups).
+
+## ⚠️ How To Destroy ⚠️
+
+In order to properly destroy the cluster, you must set `install = false` and `destroy = true`.
+
+This toggles the output for auth from the cluster resource output to `aws_eks_cluster` and `aws_eks_cluster_auth` data sources.
+
+<!-- prettier-ignore-start -->
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
@@ -92,3 +101,4 @@
 | <a name="output_cluster_roles"></a> [cluster\_roles](#output\_cluster\_roles) | n/a |
 | <a name="output_velero_storage"></a> [velero\_storage](#output\_velero\_storage) | S3 object with `id` and `arn` for velero storage bucket. If velero isn't used, will be null |
 <!-- END_TF_DOCS -->
+<!-- prettier-ignore-end -->

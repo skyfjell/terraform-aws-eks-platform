@@ -22,7 +22,7 @@ variable "cluster" {
 
   type = object({
     install = bool
-    destroy = optional(string)
+    destroy = optional(bool)
     version = string
     aws_auth_roles = optional(list(object({
       username = string,
