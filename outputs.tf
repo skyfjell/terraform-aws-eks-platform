@@ -14,6 +14,16 @@ output "cluster" {
   }
 }
 
+output "flux" {
+  description = "Flux Configuration Values"
+  value = {
+    namespace = local.config_flux.install ? module.flux_install.namespace : null
+    git = {
+      ssh_key = local.config_flux.enable_ssh_key ? module.flux_git_repository.ssh_key : null
+    }
+  }
+}
+
 output "velero_storage" {
   value       = local.config_velero.install ? module.velero[0].s3 : null
   description = "S3 object with `id` and `arn` for velero storage bucket. If velero isn't used, will be null"
