@@ -19,7 +19,6 @@ This toggles the output for auth from the cluster resource output to `aws_eks_cl
 | <a name="requirement_awsutils"></a> [awsutils](#requirement\_awsutils) | >= 0.11.0, < 1.0.0 |
 | <a name="requirement_flux"></a> [flux](#requirement\_flux) | >= 0.12.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | >= 2.2.0, < 3.0.0 |
-| <a name="requirement_kubectl"></a> [kubectl](#requirement\_kubectl) | >= 1.10.0, < 2.0.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.1.0, < 3.0.0 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | 3.1.0 |
 
@@ -82,7 +81,7 @@ This toggles the output for auth from the cluster resource output to `aws_eks_cl
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_cluster"></a> [cluster](#input\_cluster) | Cluster Configuration | <pre>object({<br>    install = bool<br>    destroy = optional(string)<br>    version = string<br>    aws_auth_roles = optional(list(object({<br>      username = string,<br>      rolearn  = string,<br>      groups   = list(string),<br>    })))<br>    subnet_ids = list(string)<br>    vpc_id     = string<br>  })</pre> | n/a | yes |
+| <a name="input_cluster"></a> [cluster](#input\_cluster) | Cluster Configuration | <pre>object({<br>    install = bool<br>    destroy = optional(bool)<br>    version = string<br>    aws_auth_roles = optional(list(object({<br>      username = string,<br>      rolearn  = string,<br>      groups   = list(string),<br>    })))<br>    subnet_ids = list(string)<br>    vpc_id     = string<br>  })</pre> | n/a | yes |
 | <a name="input_config_autoscaler"></a> [config\_autoscaler](#input\_config\_autoscaler) | Cluster Autoscaler Configuration | <pre>object({<br>    enable_service_account = bool<br>    namespace              = string<br>  })</pre> | <pre>{<br>  "enable_service_account": false,<br>  "namespace": "autoscaler"<br>}</pre> | no |
 | <a name="input_config_flux"></a> [config\_flux](#input\_config\_flux) | Flux Configuration | <pre>object({<br>    install = optional(bool)<br>    git = object({<br>      name            = string,<br>      url             = string,<br>      path            = string,<br>      known_hosts     = list(string)<br>      create_ssh_key  = optional(bool)<br>      existing_secret = optional(string)<br>      ref = object({<br>        branch = optional(string)<br>        commit = optional(string)<br>        tag    = optional(string)<br>        semver = optional(string)<br>      }),<br>    })<br>  })</pre> | n/a | yes |
 | <a name="input_config_karpenter"></a> [config\_karpenter](#input\_config\_karpenter) | Karpenter Configuration | <pre>object({<br>    install = bool<br>  })</pre> | <pre>{<br>  "install": true<br>}</pre> | no |
