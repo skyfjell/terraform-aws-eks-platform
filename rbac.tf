@@ -162,4 +162,8 @@ resource "helm_release" "rbac" {
   chart      = "null"
   values     = [yamlencode({ manifests = local.rbac_manifests })]
 
+  depends_on = [
+    module.cluster
+  ]
+
 }

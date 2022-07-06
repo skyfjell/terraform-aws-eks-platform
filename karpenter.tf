@@ -1,15 +1,4 @@
-resource "null_resource" "tear_down" {
-  count = local.cluster.install && local.config_karpenter.install ? 1 : 0
 
-  provisioner "local-exec" {
-    when    = destroy
-    command = "kubectl delete nodes -l karpenter.sh/provisioner-name"
-  }
-
-  depends_on = [
-    module.karpenter_irsa
-  ]
-}
 
 
 resource "aws_iam_instance_profile" "karpenter" {

@@ -51,3 +51,17 @@ resource "helm_release" "karpenter_provisioners" {
     helm_release.karpenter,
   ]
 }
+
+resource "null_resource" "wait_for_scaledown" {
+  count = local.cluster.install && local.config_karpenter.install ? 1 : 0
+
+  provisioner "local-exec" {
+    when        = destroy
+    interpreter = ["bash", "-c"]
+    command     = "while [[ $(kubectl get nodes --context test -l karpenter.sh/provisioner-name -o json | jq '.items | length') != 0 ]]; do sleep 5; done; sleep 3;"
+  }
+
+  depends_on = [
+    helm_release.karpenter_provisioners
+  ]
+}
