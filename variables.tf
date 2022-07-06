@@ -22,6 +22,7 @@ variable "cluster" {
 
   type = object({
     install = bool
+    destroy = optional(string)
     version = string
     aws_auth_roles = optional(list(object({
       username = string,
@@ -69,7 +70,7 @@ variable "config_flux" {
   description = "Flux Configuration"
 
   type = object({
-    install = bool
+    install = optional(bool)
     git = object({
       name            = string,
       url             = string,
@@ -102,6 +103,7 @@ variable "config_velero" {
     version = "2.30.1"
   }
 }
+
 variable "config_karpenter" {
   description = "Karpenter Configuration"
 

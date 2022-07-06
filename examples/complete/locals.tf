@@ -12,24 +12,4 @@ locals {
     groups = [for y in x.groups : y if contains(local.valid_groups, y)]
   }]
   groups = [for x in var.groups : { name = x.name }]
-
-}
-# Setup:
-#    - All can be switched on for a 1 step setup.
-# Takedown:
-#    - Karpenter and flux must be switched to false in 1st apply
-#    - Cluster then can be switched off in a 2nd apply
-locals {
-  cluster   = { install = false }
-  karpenter = { install = false }
-  flux      = { install = false }
-}
-
-locals {
-  cluster_name            = local.cluster.install ? "" : ""
-  cluster_oidc_issuer_url = local.cluster.install ? "" : ""
-}
-
-locals {
-  oidc_id = local.cluster.install ? trimprefix(local.cluster_oidc_issuer_url, "https://") : ""
 }

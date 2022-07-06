@@ -6,11 +6,28 @@ output "assume_policy" {
 output "cluster" {
   description = "Ouput from terraform-aws-eks cluster module"
   value = {
-    cluster_id                         = try(module.cluster.cluster_id, ""),
-    cluster_arn                        = try(module.cluster.cluster_arn, ""),
-    cluster_endpoint                   = try(module.cluster.cluster_endpoint, ""),
-    cluster_certificate_authority_data = try(module.cluster.cluster_certificate_authority_data, ""),
-    oidc_provider                      = try(module.cluster.oidc_provider, ""),
+    id = try(
+      module.cluster.cluster_id,
+      null
+    ),
+    destroy = local.cluster.destroy,
+    arn = try(
+      local.cluster.destroy ? one(data.aws_eks_cluster.this.*.arn) : module.cluster.cluster_arn,
+      null
+    ),
+    endpoint = try(
+      local.cluster.destroy ? one(data.aws_eks_cluster.this.*.endpoint) : module.cluster.cluster_endpoint,
+      null
+    ),
+    certificate_authority_data = try(
+      local.cluster.destroy ? one(data.aws_eks_cluster.this.*.certificate_authority.0.data) : module.cluster.cluster_certificate_authority_data,
+      null
+    ),
+    token = try(
+      one(data.aws_eks_cluster_auth.this.*.token),
+      null
+    )
+    oidc_provider = try(module.cluster.oidc_provider, ""),
   }
 }
 
