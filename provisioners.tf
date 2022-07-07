@@ -52,13 +52,18 @@ resource "helm_release" "karpenter_provisioners" {
   ]
 }
 
+
+locals {
+  cmd = local.cluster.install && local.config_karpenter.install ? { "${local.labels.id}" : null } : {}
+}
+
 resource "null_resource" "wait_for_scaledown" {
-  count = local.cluster.install && local.config_karpenter.install ? 1 : 0
+  for_each = local.cmd
 
   provisioner "local-exec" {
     when        = destroy
     interpreter = ["bash", "-c"]
-    command     = "while [[ $(kubectl get nodes --context test -l karpenter.sh/provisioner-name -o json | jq '.items | length') != 0 ]]; do sleep 5; done; sleep 3;"
+    command     = "while [[ $(aws ec2 describe-instances --region us-east-2 --query \"Reservations[*].Instances[*]\" --filters \"Name=tag-key,Values=karpenter.sh/provisioner-name\" \"Name=tag:eks:cluster-name,Values=${each.key}\" | jq '. | length' ) != 0 ]]; do sleep 5; done; sleep 3;"
   }
 
   depends_on = [
