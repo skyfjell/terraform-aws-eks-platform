@@ -2,11 +2,17 @@
 
 Gracefully set up(and tear down) EKS clusters with optional enhancements such as [Karpenter](https://karpenter.sh/)(Node Automation), [Flux](https://fluxcd.io/)(GitOps CD), [Velero](https://velero.io/)(Backups).
 
-## ⚠️ How To Destroy ⚠️
+## ⚠️ Troubleshooting ⚠️
+
+### Destruction
 
 In order to properly destroy the cluster, you must set `install = false` and `destroy = true`.
 
 This toggles the output for auth from the cluster resource output to `aws_eks_cluster` and `aws_eks_cluster_auth` data sources.
+
+### `Error: error reading EKS Cluster (<...>): couldn't find resource`
+
+If the cluster has been destroyed, but the run errored out and needed to be re-applied, unset the `destroy` flag or set to false.
 
 <!-- prettier-ignore-start -->
 <!-- BEGIN_TF_DOCS -->
