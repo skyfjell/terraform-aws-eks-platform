@@ -18,9 +18,9 @@ module "example-complete" {
   source = "../../"
 
   cluster = {
-    install = true
+    install = false
     # Uncomment with `install = false` to destroy
-    # destroy    = true
+    destroy    = true
     version    = "1.22"
     subnet_ids = local.subnet_ids
     vpc_id     = module.vpc.vpc_id
