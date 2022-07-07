@@ -1,6 +1,3 @@
-
-
-
 resource "aws_iam_instance_profile" "karpenter" {
   count = local.cluster.install && local.config_karpenter.install ? 1 : 0
 
