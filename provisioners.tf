@@ -63,7 +63,7 @@ resource "null_resource" "wait_for_scaledown" {
   provisioner "local-exec" {
     when        = destroy
     interpreter = ["bash", "-c"]
-    command     = "while [[ $(aws ec2 describe-instances --region us-east-2 --query \"Reservations[*].Instances[*]\" --filters \"Name=tag-key,Values=karpenter.sh/provisioner-name\" \"Name=tag:eks:cluster-name,Values=${each.key}\" | jq '. | length' ) != 0 ]]; do sleep 5; done; sleep 3;"
+    command     = "while [[ $(aws ec2 describe-instances --region us-east-2 --query \"Reservations[*].Instances[*].{InstanceId: InstanceId, State: State.Name}\" --filters \"Name=tag-key,Values=karpenter.sh/provisioner-name\" \"Name=tag-key,Values=kubernetes.io/cluster/${each.key}\" | jq '. | flatten | map(select(.State != \"terminated\")) | length' ) != 0 ]]; do sleep 5; done; sleep 3;"
   }
 
   depends_on = [
