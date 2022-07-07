@@ -12,28 +12,24 @@ locals {
     for sid in val["subnets"] : "${name}-${sid}" => merge(val["spec"], { subnet_ids = [local.subnet_ids[local.sub_map[sid]]] })
     } if !contains(val["subnets"], "all")
   ]
-
 }
 
 module "example-complete" {
   source = "../../"
 
   cluster = {
-    install    = local.cluster.install
+    install = true
+    # Uncomment with `install = false` to destroy
+    # destroy    = true
     version    = "1.22"
     subnet_ids = local.subnet_ids
     vpc_id     = module.vpc.vpc_id
   }
 
-  config_karpenter = {
-    install = local.karpenter.install
-  }
-
   config_flux = {
-    install = local.flux.install
     git = {
       url  = "ssh://git@github.com/skyfjell/examples.git"
-      path = "clusters/ex-stage"
+      path = "clusters/example"
       name = "ssh"
       ref  = { branch = "main" }
       known_hosts = [
@@ -56,42 +52,41 @@ module "example-complete" {
 
 }
 
-provider "kubernetes" {
-  host                   = module.example-complete.cluster.cluster_endpoint
-  cluster_ca_certificate = base64decode(module.example-complete.cluster.cluster_certificate_authority_data)
-
-  exec {
-    api_version = "client.authentication.k8s.io/v1beta1"
-    command     = "aws"
-    # This requires the awscli to be installed locally where Terraform is executed
-    args = ["eks", "get-token", "--cluster-name", module.example-complete.cluster.cluster_id]
-  }
+locals {
+  cluster_auth = module.example-complete.cluster
 }
 
-provider "kubectl" {
-  load_config_file = false
 
-  host                   = module.example-complete.cluster.cluster_endpoint
-  cluster_ca_certificate = base64decode(module.example-complete.cluster.cluster_certificate_authority_data)
+provider "kubernetes" {
+  host                   = local.cluster_auth.endpoint
+  cluster_ca_certificate = base64decode(local.cluster_auth.certificate_authority_data)
+  token                  = local.cluster_auth.token
 
-  exec {
-    api_version = "client.authentication.k8s.io/v1beta1"
-    command     = "aws"
-    # This requires the awscli to be installed locally where Terraform is executed
-    args = ["eks", "get-token", "--cluster-name", module.example-complete.cluster.cluster_id]
+  dynamic "exec" {
+    for_each = local.cluster_auth.token == null ? [1] : []
+    content {
+      api_version = "client.authentication.k8s.io/v1beta1"
+      command     = "aws"
+      # This requires the awscli to be installed locally where Terraform is executed
+      args = ["eks", "get-token", "--cluster-name", local.cluster_auth.id]
+    }
   }
 }
 
 provider "helm" {
   kubernetes {
-    host                   = module.example-complete.cluster.cluster_endpoint
-    cluster_ca_certificate = base64decode(module.example-complete.cluster.cluster_certificate_authority_data)
+    host                   = local.cluster_auth.endpoint
+    cluster_ca_certificate = base64decode(local.cluster_auth.certificate_authority_data)
+    token                  = local.cluster_auth.token
 
-    exec {
-      api_version = "client.authentication.k8s.io/v1beta1"
-      command     = "aws"
-      # This requires the awscli to be installed locally where Terraform is executed
-      args = ["eks", "get-token", "--cluster-name", module.example-complete.cluster.cluster_id]
+    dynamic "exec" {
+      for_each = local.cluster_auth.token == null ? [1] : []
+      content {
+        api_version = "client.authentication.k8s.io/v1beta1"
+        command     = "aws"
+        # This requires the awscli to be installed locally where Terraform is executed
+        args = ["eks", "get-token", "--cluster-name", local.cluster_auth.id]
+      }
     }
   }
 }
