@@ -49,6 +49,42 @@ resource "helm_release" "karpenter_provisioners" {
 
   depends_on = [
     helm_release.karpenter,
-    module.cluster.aws_auth_configmap_yaml
+  ]
+}
+
+
+locals {
+  wait_command = <<EOT
+    while [[ $( \
+      aws ec2 describe-instances \
+      --region ${data.aws_region.current.name} \
+      --query "Reservations[*].Instances[*].{InstanceId: InstanceId, State: State.Name}" \
+      --filters "Name=tag-key,Values=karpenter.sh/provisioner-name" "Name=tag-key,Values=kubernetes.io/cluster/${local.labels.id}" \
+      | jq '. | flatten | map(select(.State != "terminated")) | length' \
+      ) != 0 \
+    ]];
+    do
+      sleep 5;
+    done;
+
+    sleep 3;
+  EOT
+}
+
+locals {
+  cmd = local.cluster.install && local.config_karpenter.install ? { "${local.wait_command}" : null } : {}
+}
+
+resource "null_resource" "wait_for_scaledown" {
+  for_each = local.cmd
+
+  provisioner "local-exec" {
+    when        = destroy
+    interpreter = ["bash", "-c"]
+    command     = each.key
+  }
+
+  depends_on = [
+    helm_release.karpenter_provisioners
   ]
 }

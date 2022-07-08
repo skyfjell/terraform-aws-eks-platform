@@ -8,10 +8,6 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = ">= 2.1.0, < 3.0.0"
     }
-    kubectl = {
-      source  = "gavinbunney/kubectl"
-      version = ">= 1.10.0, < 2.0.0"
-    }
     tls = {
       source  = "hashicorp/tls"
       version = "3.1.0"

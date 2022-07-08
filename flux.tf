@@ -1,5 +1,6 @@
 locals {
-  install_flux = local.cluster.install && local.config_flux.install
+  // Karpenter needs to be up so flux gets a node group
+  install_flux = local.cluster.install && local.config_flux.install && local.config_karpenter.install
 }
 
 module "flux_install" {
@@ -19,7 +20,8 @@ module "flux_install" {
   ]
 
   depends_on = [
-    helm_release.karpenter
+    helm_release.karpenter_provisioners,
+    null_resource.wait_for_scaledown
   ]
 }
 

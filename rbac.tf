@@ -163,6 +163,7 @@ resource "helm_release" "rbac" {
   values     = [yamlencode({ manifests = local.rbac_manifests })]
 
   depends_on = [
-    module.cluster.aws_auth_configmap_yaml
+    module.cluster
   ]
+
 }

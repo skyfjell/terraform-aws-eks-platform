@@ -3,7 +3,6 @@ resource "aws_iam_instance_profile" "karpenter" {
 
   name = "KarpenterNodeInstanceProfile-${local.labels.id}"
   role = module.cluster.eks_managed_node_groups["default"].iam_role_name
-
 }
 
 module "karpenter_irsa" {
@@ -28,7 +27,7 @@ module "karpenter_irsa" {
   }
 
   depends_on = [
-    module.cluster.aws_auth_configmap_yaml
+    aws_iam_instance_profile.karpenter
   ]
 }
 
@@ -70,4 +69,7 @@ resource "helm_release" "karpenter" {
     }]
   })]
 
+  depends_on = [
+    module.karpenter_irsa
+  ]
 }
