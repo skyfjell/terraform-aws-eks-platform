@@ -43,5 +43,9 @@ locals {
     install = local.cluster.install,
   })
 
+  config_kyverno = defaults(var.config_kyverno, {
+    install = local.cluster.install,
+  })
+
   partition = data.aws_partition.current.partition
 }

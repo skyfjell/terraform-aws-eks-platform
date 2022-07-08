@@ -1,5 +1,5 @@
 resource "helm_release" "kyverno" {
-  count = local.cluster.install ? 1 : 0
+  count = local.cluster.install && local.config_kyverno.install ? 1 : 0
 
   namespace        = "kyverno"
   create_namespace = true
@@ -79,6 +79,8 @@ locals {
 
 
 resource "helm_release" "kyverno-custom-policies" {
+  count = local.cluster.install && local.config_kyverno.install ? 1 : 0
+
   name       = "kyverno-custom-policies" 
   repository = "https://skyfjell.github.io/charts"
   chart      = "null"

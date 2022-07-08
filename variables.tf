@@ -115,3 +115,15 @@ variable "config_karpenter" {
     install = true
   }
 }
+
+variable "config_kyverno" {
+  description = "Kyverno Configuration"
+
+  type = object({
+    install = bool
+  })
+
+  default = {
+    install = true
+  }
+}
