@@ -11,7 +11,9 @@ locals {
   # Cluster Config
   cluster = defaults(var.cluster, {
     install = true,
+    destroy = false
   })
+
   managed_node_groups = var.managed_node_groups
   cluster_id          = module.cluster.cluster_id
 

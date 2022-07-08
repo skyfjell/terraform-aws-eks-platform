@@ -60,3 +60,15 @@ module "cluster" {
     },
   )
 }
+
+data "aws_eks_cluster" "this" {
+  count = local.cluster.destroy ? 1 : 0
+
+  name = local.labels.id
+}
+
+data "aws_eks_cluster_auth" "this" {
+  count = local.cluster.destroy ? 1 : 0
+
+  name = local.labels.id
+}

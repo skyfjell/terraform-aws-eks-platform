@@ -13,19 +13,3 @@ locals {
   }]
   groups = [for x in var.groups : { name = x.name }]
 }
-
-locals {
-  cluster = {
-    install   = false
-    karpenter = false
-  }
-}
-
-locals {
-  cluster_name            = local.cluster.install ? "" : ""
-  cluster_oidc_issuer_url = local.cluster.install ? "" : ""
-}
-
-locals {
-  oidc_id = local.cluster.install ? trimprefix(local.cluster_oidc_issuer_url, "https://") : ""
-}
