@@ -13,7 +13,7 @@ module "flux_install" {
 
   tolerations = [
     {
-      key      = "system-platform"
+      key      = "platform-system"
       operator = "Exists"
       effect   = "NoSchedule"
     }

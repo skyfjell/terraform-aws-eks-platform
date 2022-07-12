@@ -75,7 +75,7 @@ resource "helm_release" "velero" {
       }]
     }]
     nodeSelector = {
-      spec = "system-platform"
+      spec = "platform-system"
     }
     serviceAccount = {
       server = {
