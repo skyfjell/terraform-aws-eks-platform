@@ -11,7 +11,7 @@ module "flux_install" {
 
   name = local.labels.id
 
-  node_selector = { "skyfjell.io/node-selector": "platform-system" }
+  node_selector = { "skyfjell.io/node-selector" : "platform-system" }
 
   depends_on = [
     helm_release.karpenter_provisioners,
