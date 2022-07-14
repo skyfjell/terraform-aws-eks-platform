@@ -19,7 +19,7 @@ module "example-complete" {
 
   cluster = {
     # Uncomment both to destroy
-    # install = false
+    # install    = false
     # destroy    = true
     version    = "1.22"
     subnet_ids = local.subnet_ids

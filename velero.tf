@@ -1,5 +1,11 @@
+locals {
+  velero_tf = {
+    install = local.cluster.install && local.config_velero.install
+  }
+}
+
 module "velero" {
-  count  = local.config_velero.install ? 1 : 0
+  count  = local.velero_tf.install ? 1 : 0
   source = "./modules/cluster-backups"
 
   oidc_id        = local.oidc_id

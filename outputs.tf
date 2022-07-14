@@ -1,10 +1,10 @@
 output "assume_policy" {
+  description = "OIDC Assume Role Policy"
   value       = data.aws_iam_policy_document.eks_assume_role_policy
-  description = "Commonly used oidc assume role policy"
 }
 
 output "cluster" {
-  description = "Ouput from terraform-aws-eks cluster module"
+  description = "Cluster Properties"
   value = {
     id = try(
       module.cluster.cluster_id,
@@ -31,12 +31,20 @@ output "cluster" {
   }
 }
 
+output "flux" {
+  description = "Flux Properties"
+  value = {
+    ssh_key = one(module.flux_git_repository.*.ssh_key)
+  }
+}
+
 output "velero_storage" {
-  value       = local.config_velero.install ? module.velero[0].s3 : null
-  description = "S3 object with `id` and `arn` for velero storage bucket. If velero isn't used, will be null"
+  description = "Velero Bucket Properties"
+  value       = one(module.velero.*.s3)
 }
 
 output "cluster_roles" {
+  description = "Cluster Role ARNs"
   value = local.cluster.install ? {
     edit = one(module.platform_edit_iam[*].role.arn)
     view = one(module.platform_view_iam[*].role.arn)
