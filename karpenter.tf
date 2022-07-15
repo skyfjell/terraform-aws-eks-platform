@@ -2,7 +2,7 @@ resource "aws_iam_instance_profile" "karpenter" {
   count = local.cluster.install && local.config_karpenter.install ? 1 : 0
 
   name = "KarpenterNodeInstanceProfile-${local.labels.id}"
-  role = module.cluster.eks_managed_node_groups["default"].iam_role_name
+  role = module.cluster.eks_managed_node_groups[local.default_node_group_name].iam_role_name
 }
 
 module "karpenter_irsa" {
@@ -16,7 +16,7 @@ module "karpenter_irsa" {
 
   karpenter_controller_cluster_id = module.cluster.cluster_id
   karpenter_controller_node_iam_role_arns = [
-    module.cluster.eks_managed_node_groups["default"].iam_role_arn
+    module.cluster.eks_managed_node_groups[local.default_node_group_name].iam_role_arn
   ]
 
   oidc_providers = {

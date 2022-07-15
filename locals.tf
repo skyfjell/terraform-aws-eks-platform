@@ -14,8 +14,9 @@ locals {
     destroy = false
   })
 
-  managed_node_groups = var.managed_node_groups
-  cluster_id          = module.cluster.cluster_id
+  cluster_id              = module.cluster.cluster_id
+  managed_node_groups     = var.managed_node_groups
+  default_node_group_name = join("-", [local.labels.id, "default"])
 
   users = {
     edit = var.users.edit == null ? [] : var.users.edit,

@@ -13,7 +13,7 @@ module "cluster" {
   subnet_ids = local.cluster.subnet_ids
 
   eks_managed_node_groups = local.cluster.install ? {
-    "${local.labels.id}" = {
+    (local.default_node_group_name) = {
       instance_types = ["t3.medium"]
 
       min_size     = 1
