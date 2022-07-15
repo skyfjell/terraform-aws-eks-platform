@@ -72,7 +72,7 @@ variable "config_flux" {
   type = object({
     install = optional(bool)
     git = object({
-      name            = string,
+      name            = optional(string),
       url             = string,
       path            = string,
       known_hosts     = list(string)

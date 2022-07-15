@@ -30,14 +30,13 @@ module "example-complete" {
     git = {
       url  = "ssh://git@github.com/skyfjell/examples.git"
       path = "clusters/example"
-      name = "ssh"
-      ref  = { branch = "main" }
       known_hosts = [
         "github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg="
       ]
       create_ssh_key = false
     }
   }
+
   labels = module.labels
 
   users = {
