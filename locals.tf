@@ -29,7 +29,7 @@ locals {
 
   config_flux = defaults(var.config_flux, {
     install = local.cluster.install,
-    name    = labels.id
+    name    = local.labels.id
     git = {
       create_ssh_key = true,
       ref = {
@@ -39,7 +39,7 @@ locals {
   })
 
   config_velero = defaults(var.config_velero, {
-    install = local.cluster.install,
+    install = true,
     version = "2.30.1"
   })
 
