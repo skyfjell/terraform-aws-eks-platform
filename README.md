@@ -101,9 +101,10 @@ If the cluster has been destroyed, but the run errored out and needed to be re-a
 
 | Name | Description |
 |------|-------------|
-| <a name="output_assume_policy"></a> [assume\_policy](#output\_assume\_policy) | Commonly used oidc assume role policy |
-| <a name="output_cluster"></a> [cluster](#output\_cluster) | Ouput from terraform-aws-eks cluster module |
-| <a name="output_cluster_roles"></a> [cluster\_roles](#output\_cluster\_roles) | n/a |
-| <a name="output_velero_storage"></a> [velero\_storage](#output\_velero\_storage) | S3 object with `id` and `arn` for velero storage bucket. If velero isn't used, will be null |
+| <a name="output_assume_policy"></a> [assume\_policy](#output\_assume\_policy) | OIDC Assume Role Policy |
+| <a name="output_cluster"></a> [cluster](#output\_cluster) | Cluster Properties |
+| <a name="output_cluster_roles"></a> [cluster\_roles](#output\_cluster\_roles) | Cluster Role ARNs |
+| <a name="output_flux"></a> [flux](#output\_flux) | Flux Properties |
+| <a name="output_velero_storage"></a> [velero\_storage](#output\_velero\_storage) | Velero Bucket Properties |
 <!-- END_TF_DOCS -->
 <!-- prettier-ignore-end -->
