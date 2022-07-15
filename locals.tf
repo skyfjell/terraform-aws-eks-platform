@@ -29,8 +29,8 @@ locals {
 
   config_flux = defaults(var.config_flux, {
     install = local.cluster.install,
-    name    = local.labels.id
     git = {
+      name           = local.labels.id
       create_ssh_key = true,
       ref = {
         branch = "main"
