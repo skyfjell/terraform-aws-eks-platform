@@ -31,6 +31,10 @@ module "cluster" {
           "effect" : "NO_SCHEDULE"
         }
       ]
+
+      use_name_prefix                = false
+      iam_role_use_name_prefix       = false
+      security_group_use_name_prefix = false
     }
   } : {}
 
