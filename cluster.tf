@@ -7,6 +7,7 @@ module "cluster" {
   cluster_version          = local.cluster.version
   enable_irsa              = true
   iam_role_use_name_prefix = false
+  create_kms_key           = true
 
 
   vpc_id     = local.cluster.vpc_id
