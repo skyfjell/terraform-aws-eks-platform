@@ -4,12 +4,12 @@ locals {
       apiVersion = "karpenter.sh/v1alpha5"
       kind       = "Provisioner"
       metadata = {
-        name   = "system-platform"
-        labels = merge({ for key in keys(local.labels.tags) : key => tostring(local.labels.tags[key]) }, { "spec" = "system-platform" })
+        name   = "platform-system"
+        labels = merge({ for key in keys(local.labels.tags) : key => tostring(local.labels.tags[key]) }, { "skyfjell.io/node-selector" = "platform-system" })
       }
 
       spec = {
-        labels = { "spec" = "system-platform" }
+        labels = { "skyfjell.io/node-selector" = "platform-system" }
 
         requirements = [
           {

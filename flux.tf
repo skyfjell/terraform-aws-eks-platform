@@ -11,13 +11,7 @@ module "flux_install" {
 
   name = local.labels.id
 
-  tolerations = [
-    {
-      key      = "system-platform"
-      operator = "Exists"
-      effect   = "NoSchedule"
-    }
-  ]
+  node_selector = { "skyfjell.io/node-selector" : "platform-system" }
 
   depends_on = [
     helm_release.karpenter_provisioners,

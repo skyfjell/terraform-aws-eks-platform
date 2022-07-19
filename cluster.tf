@@ -7,7 +7,10 @@ module "cluster" {
   cluster_version          = local.cluster.version
   enable_irsa              = true
   iam_role_use_name_prefix = false
+  create_kms_key           = true
 
+  # Bug tracker: https://github.com/terraform-aws-modules/terraform-aws-eks/issues/2169
+  kms_key_enable_default_policy = true
 
   vpc_id     = local.cluster.vpc_id
   subnet_ids = local.cluster.subnet_ids
