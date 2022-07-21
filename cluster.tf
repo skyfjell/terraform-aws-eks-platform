@@ -16,10 +16,8 @@ module "cluster" {
   subnet_ids = local.cluster.subnet_ids
 
   eks_managed_node_groups = local.cluster.install ? {
-    default = {
-      instance_types                        = ["t3.medium"]
-      create_security_group                 = false
-      attach_cluster_primary_security_group = true
+    (local.default_node_group_name) = {
+      instance_types = ["t3.medium"]
 
       min_size     = 1
       max_size     = 1
@@ -36,6 +34,10 @@ module "cluster" {
           "effect" : "NO_SCHEDULE"
         }
       ]
+
+      use_name_prefix                = false
+      iam_role_use_name_prefix       = false
+      security_group_use_name_prefix = false
     }
   } : {}
 

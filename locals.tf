@@ -14,8 +14,9 @@ locals {
     destroy = false
   })
 
-  managed_node_groups = var.managed_node_groups
-  cluster_id          = module.cluster.cluster_id
+  cluster_id              = module.cluster.cluster_id
+  managed_node_groups     = var.managed_node_groups
+  default_node_group_name = join("-", [local.labels.id, "default"])
 
   users = {
     edit = var.users.edit == null ? [] : var.users.edit,
@@ -30,12 +31,16 @@ locals {
   config_flux = defaults(var.config_flux, {
     install = local.cluster.install,
     git = {
+      name           = local.labels.id
       create_ssh_key = true,
+      ref = {
+        branch = "main"
+      },
     }
   })
 
   config_velero = defaults(var.config_velero, {
-    install = local.cluster.install,
+    install = true,
     version = "2.30.1"
   })
 
