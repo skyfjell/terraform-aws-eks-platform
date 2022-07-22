@@ -42,3 +42,11 @@ output "cluster_roles" {
     view = one(module.platform_view_iam[*].role.arn)
   } : {}
 }
+
+output "flux" {
+  description = "Object with flux information."
+  value = {
+    ssh_key   = module.flux_git_repository.ssh_key
+    namespace = module.flux_git_repository.namespace
+  }
+}
