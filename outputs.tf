@@ -46,7 +46,7 @@ output "cluster_roles" {
 output "flux" {
   description = "Object with flux information."
   value = {
-    ssh_key   = module.flux_git_repository.ssh_key
-    namespace = module.flux_git_repository.namespace
+    ssh_key   = local.config_flux.install ? module.flux_git_repository.0.ssh_key : null
+    namespace = local.config_flux.install ? module.flux_git_repository.0.namespace : null
   }
 }
