@@ -90,9 +90,10 @@ variable "config_flux" {
 
 variable "config_velero" {
   description = <<EOT
-    Configures velero and the velero bucket. An external velero bucket that is managed externally from this module can be 
-    passed in via `config_bucket = {id = "123"}`. If `config_bucket = {enable = true}` even with `install = false`
-    the bucket will remain created.
+    Configures velero and the velero bucket. An external velero bucket that 
+    is managed externally from this module can be passed in via 
+    `config_bucket = {id = "123"}`. If `config_bucket = {enable = true}` 
+    even with `install = false` the bucket will remain created.
   EOT
 
   type = object({
