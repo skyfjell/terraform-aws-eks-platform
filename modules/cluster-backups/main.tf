@@ -2,6 +2,8 @@ locals {
   server_side_encryption_configuration = local.config_bucket.server_side_encryption_configuration == null ? {
     type = "aws:kms"
   } : local.config_bucket.server_side_encryption_configuration
+
+  bucket_exists = local.config_bucket.enable || local.config_bucket.id != null
 }
 
 
@@ -36,9 +38,12 @@ module "backups_bucket" {
   } : {}
 }
 
+locals {
+  bucket_exists = local.config_bucket.enable || local.config_bucket.id != null
+}
 data "aws_s3_bucket" "this" {
-  count  = local.install ? 1 : 0
-  bucket = local.config_bucket.enable ? module.backups_bucket.0.s3_id : local.config_bucket.id
+  count  = local.bucket_exists ? 1 : 0
+  bucket = local.config_bucket.id != null ? local.config_bucket.id : one(module.backups_bucket.*.s3_id)
 }
 
 resource "helm_release" "velero" {
