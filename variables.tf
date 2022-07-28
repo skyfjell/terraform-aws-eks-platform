@@ -97,12 +97,11 @@ variable "config_velero" {
   EOT
 
   type = object({
-    install   = optional(bool)
-    version   = optional(string)
-    bucket_id = optional(string)
+    install = optional(bool)
+    version = optional(string)
     config_bucket = optional(object({
-      id     = optional(string)
-      enable = optional(bool)
+      existing_id = optional(string)
+      enable      = optional(bool)
       server_side_encryption_configuration = optional(object({
         type              = optional(string)
         kms_master_key_id = optional(string)

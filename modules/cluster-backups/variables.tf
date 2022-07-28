@@ -10,8 +10,8 @@ variable "cluster_id" {
 variable "config_bucket" {
   description = "Backup S3 bucket configuration, pass through to bucket module."
   type = object({
-    id     = optional(string)
-    enable = optional(bool)
+    existing_id = optional(string)
+    enable      = optional(bool)
     server_side_encryption_configuration = optional(object({
       type              = optional(string)
       kms_master_key_id = optional(string)
