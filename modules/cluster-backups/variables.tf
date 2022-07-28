@@ -7,10 +7,17 @@ variable "cluster_id" {
   type = string
 }
 
-variable "bucket_id" {
-  description = "AWS S3 bucket id"
-  type        = string
-  default     = null
+variable "config_bucket" {
+  description = "Backup S3 bucket configuration, pass through to bucket module."
+  type = object({
+    id     = optional(string)
+    enable = optional(bool)
+    server_side_encryption_configuration = optional(object({
+      type              = optional(string)
+      kms_master_key_id = optional(string)
+      alias             = optional(string)
+    }))
+  })
 }
 
 variable "velero_version" {
@@ -23,4 +30,9 @@ variable "labels" {
     id   = string
     tags = any
   })
+}
+
+variable "install" {
+  type    = bool
+  default = true
 }

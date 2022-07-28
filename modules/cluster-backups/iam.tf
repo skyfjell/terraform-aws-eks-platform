@@ -1,5 +1,6 @@
 
 data "aws_iam_policy_document" "velero" {
+  count = local.install ? 1 : 0
   // checkov:skip=CKV_AWS_111: Conditions on managed tags constrain
   statement {
     actions = [
@@ -10,7 +11,7 @@ data "aws_iam_policy_document" "velero" {
       "s3:ListMultipartUploadParts"
     ]
     resources = [
-      "${data.aws_s3_bucket.this.arn}/*"
+      "${data.aws_s3_bucket.this.0.arn}/*"
     ]
   }
 
@@ -18,7 +19,7 @@ data "aws_iam_policy_document" "velero" {
     actions = [
       "s3:ListBucket"
     ]
-    resources = [data.aws_s3_bucket.this.arn]
+    resources = [data.aws_s3_bucket.this.0.arn]
   }
 
   statement {
@@ -76,8 +77,10 @@ data "aws_iam_policy_document" "velero_assume" {
 // Policies 
 
 resource "aws_iam_policy" "velero" {
+  count = local.install ? 1 : 0
+
   name_prefix = "velero_backups_policy"
-  policy      = data.aws_iam_policy_document.velero.json
+  policy      = data.aws_iam_policy_document.velero.0.json
   description = "Velero s3 IAM access"
   tags        = local.labels.tags
 }
@@ -85,6 +88,8 @@ resource "aws_iam_policy" "velero" {
 // Roles 
 
 resource "aws_iam_role" "velero" {
+  count = local.install ? 1 : 0
+
   name_prefix        = "velero_backups"
   assume_role_policy = data.aws_iam_policy_document.velero_assume.json
   tags               = local.labels.tags
@@ -93,7 +98,9 @@ resource "aws_iam_role" "velero" {
 // Attachments
 
 resource "aws_iam_role_policy_attachment" "this" {
-  role       = aws_iam_role.velero.name
-  policy_arn = aws_iam_policy.velero.arn
+  count = local.install ? 1 : 0
+
+  role       = aws_iam_role.velero.0.name
+  policy_arn = aws_iam_policy.velero.0.arn
 }
 

@@ -34,10 +34,18 @@ locals {
     }
   })
 
+
   config_velero = defaults(var.config_velero, {
-    install = local.cluster.install,
+    install = true
     version = "2.30.1"
-  })
+    config_bucket = {
+      enable = true
+      server_side_encryption_configuration = {
+        type = "aws:kms"
+      }
+    }
+    }
+  )
 
   config_karpenter = defaults(var.config_karpenter, {
     install = local.cluster.install,
