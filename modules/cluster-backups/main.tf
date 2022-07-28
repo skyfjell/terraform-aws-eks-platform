@@ -83,9 +83,7 @@ resource "helm_release" "velero" {
         name      = "plugins"
       }]
     }]
-    nodeSelector = {
-      spec = "platform-system"
-    }
+    nodeSelector = { "skyfjell.io/node-selector" : "platform-system" }
     serviceAccount = {
       server = {
         annotations = {
