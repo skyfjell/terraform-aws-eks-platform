@@ -13,7 +13,3 @@ locals {
 
 }
 
-locals {
-  create_bucket = local.config_bucket.id == null && local.config_bucket.enable
-}
-
