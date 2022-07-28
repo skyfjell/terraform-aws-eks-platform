@@ -89,18 +89,37 @@ variable "config_flux" {
 }
 
 variable "config_velero" {
-  description = "Velero Configuration"
+  description = <<EOT
+    Configures velero and the velero bucket. An external velero bucket that 
+    is managed externally from this module can be passed in via 
+    `config_bucket = {id = "123"}`. If `config_bucket = {enable = true}` 
+    even with `install = false` the bucket will remain created.
+  EOT
 
   type = object({
-    install          = optional(bool)
-    version          = optional(string)
-    bucket           = optional(string)
+    install = optional(bool)
+    version = optional(string)
+    config_bucket = optional(object({
+      existing_id = optional(string)
+      enable      = optional(bool)
+      server_side_encryption_configuration = optional(object({
+        type              = optional(string)
+        kms_master_key_id = optional(string)
+        alias             = optional(string)
+      }))
+    }))
     service_accounts = optional(list(string))
   })
 
   default = {
     install = true
     version = "2.30.1"
+    config_bucket = {
+      enable = true
+      server_side_encryption_configuration = {
+        type = "aws:kms"
+      }
+    }
   }
 }
 

@@ -46,8 +46,10 @@ module "example-complete" {
   }
 
   config_velero = {
-    install = false
-    version = "2.29.5"
+    install = true
+    config_bucket = {
+      enable = true,
+    }
   }
 
 }

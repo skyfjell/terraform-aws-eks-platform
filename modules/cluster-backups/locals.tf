@@ -1,8 +1,15 @@
 locals {
+  install        = var.install
   oidc_id        = var.oidc_id
   cluster_id     = var.oidc_id
   velero_version = var.velero_version
   labels         = var.labels
-  bucket_id      = var.bucket_id
-  create_bucket  = var.bucket_id == null
+  config_bucket = defaults(var.config_bucket, {
+    enable = true
+    server_side_encryption_configuration = {
+      type = "aws:kms"
+    }
+  })
+
 }
+

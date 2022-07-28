@@ -1,40 +1,51 @@
+locals {
+  server_side_encryption_configuration = local.config_bucket.server_side_encryption_configuration == null ? {
+    type = "aws:kms"
+  } : local.config_bucket.server_side_encryption_configuration
+
+  bucket_exists = local.config_bucket.enable || local.config_bucket.existing_id != null
+}
+
 
 module "backups_bucket" {
-  count = local.create_bucket ? 1 : 0
+  count = local.config_bucket.enable ? 1 : 0
 
   source  = "skyfjell/s3/aws"
-  version = "1.0.1"
+  version = "1.0.4"
 
-  use_prefix    = false
-  name          = "velero-backup"
-  logging       = null
-  sse_algorithm = "AES256"
+  use_prefix                           = false
+  name                                 = "velero-backup"
+  logging                              = null
+  server_side_encryption_configuration = local.server_side_encryption_configuration
 
   labels = local.labels
 
-  roles = [{
-    name = aws_iam_role.velero.name
+  roles = local.install ? [{
+    name = aws_iam_role.velero.0.name
     mode = "RW"
-  }]
+  }] : []
 
-  policy_conditions = {
+  policy_conditions = local.install ? {
     RW = {
       "velero" = {
         test     = "ArnEquals"
         variable = "aws:SourceArn"
         values = [
-          aws_iam_role.velero.arn
+          aws_iam_role.velero.0.arn
         ]
       }
     }
-  }
+  } : {}
 }
 
 data "aws_s3_bucket" "this" {
-  bucket = local.create_bucket ? module.backups_bucket[0].s3_id : local.bucket_id
+  count  = local.bucket_exists ? 1 : 0
+  bucket = local.config_bucket.existing_id != null ? local.config_bucket.existing_id : one(module.backups_bucket.*.s3_id)
 }
 
 resource "helm_release" "velero" {
+  count = local.install ? 1 : 0
+
   name             = "velero"
   namespace        = "velero" # we should hard code this here
   version          = local.velero_version
@@ -53,7 +64,7 @@ resource "helm_release" "velero" {
     configuration = {
       provider = "aws"
       backupStorageLocation = {
-        bucket = data.aws_s3_bucket.this.id
+        bucket = data.aws_s3_bucket.this.0.id
         config = {
           region = data.aws_region.current.name
           s3Url  = "https://s3.us-east-2.amazonaws.com"
@@ -74,13 +85,11 @@ resource "helm_release" "velero" {
         name      = "plugins"
       }]
     }]
-    nodeSelector = {
-      spec = "platform-system"
-    }
+    nodeSelector = { "skyfjell.io/node-selector" : "platform-system" }
     serviceAccount = {
       server = {
         annotations = {
-          "eks.amazonaws.com/role-arn" = aws_iam_role.velero.arn
+          "eks.amazonaws.com/role-arn" = aws_iam_role.velero.0.arn
         }
       }
     }
