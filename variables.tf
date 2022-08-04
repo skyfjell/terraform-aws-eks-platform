@@ -78,6 +78,7 @@ variable "config_flux" {
       known_hosts     = list(string)
       create_ssh_key  = optional(bool)
       existing_secret = optional(string)
+      random_suffix   = optional(bool)
       ref = object({
         branch = optional(string)
         commit = optional(string)
