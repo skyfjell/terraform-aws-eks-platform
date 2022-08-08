@@ -32,6 +32,7 @@ module "flux_git_repository" {
   name            = local.config_flux.git.name
   create_ssh_key  = local.config_flux.git.create_ssh_key
   existing_secret = local.config_flux.git.existing_secret
+  random_suffix   = try(local.config_flux.git.random_suffix, true)
 
   depends_on = [module.flux_install]
 }
