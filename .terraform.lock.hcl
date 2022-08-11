@@ -5,6 +5,7 @@ provider "registry.terraform.io/cloudposse/awsutils" {
   version     = "0.11.1"
   constraints = ">= 0.11.0, < 1.0.0"
   hashes = [
+    "h1:/DY7c73tXBTmGXUuqbzpgT6H7O2kdCzUGvF7GXq8UvA=",
     "h1:zyWaEY2EbPG65+2rHbqMrHwIlbecVa44Tm3Cq2+FuaU=",
     "zh:25d072783836be06419b5fa02d14b8ca895342e9c1c58f8e08978c1623fca68b",
     "zh:2b7a5af2d59ac31c54e661b0fdbde94f23ab74a42df5d36416f037ed362ce562",
@@ -25,9 +26,10 @@ provider "registry.terraform.io/cloudposse/awsutils" {
 
 provider "registry.terraform.io/fluxcd/flux" {
   version     = "0.15.3"
-  constraints = ">= 0.12.0, >= 0.14.1"
+  constraints = ">= 0.12.0"
   hashes = [
     "h1:1PmqAPe5dxlsQYlAwtX4FZfvlZm9UDaXu+tAkZkXlkw=",
+    "h1:TiIstt6xYsjO+kGsAoXwBOn7+zPwLCaShTgBbSD+rCI=",
     "zh:0dd643af22f78a4b95423d80bd38f3300fd877c5eec3873f0f064aa957deddd7",
     "zh:121cb06a3e1e02ea2d91cbe58b793ee7f0a9e99b9229124822e93ecff81f641a",
     "zh:2f2150cd259360ba9f25b4f8f047148076ebab2013aabb703cab93993641dde5",
@@ -67,6 +69,7 @@ provider "registry.terraform.io/hashicorp/aws" {
   version     = "4.21.0"
   constraints = ">= 2.0.0, >= 3.72.0, >= 4.0.0, <= 5.0.0, < 5.0.0"
   hashes = [
+    "h1:eeuRCgJ2aEsVvCl0UOU99Rx58L2NMpM4Q5XdsfO4sr8=",
     "h1:laCXW8oQgDRQ4jzYQ9rUToNW0wPZS6FzeYuX6dGQa9Y=",
     "zh:16529a8ac663845da9214a75f5a32a2d0daf393612e46259b6dff10f1b8b50ed",
     "zh:1ae36386d4862a489a3981a482a537c16f8a1588a445b60f173d1f13fcc3552e",
@@ -128,6 +131,7 @@ provider "registry.terraform.io/hashicorp/kubernetes" {
   version     = "2.12.1"
   constraints = ">= 2.1.0, >= 2.4.1, >= 2.10.0, < 3.0.0"
   hashes = [
+    "h1:6ZgqegUao9WcfVzYg7taxCQOQldTmMVw0HqjG5S46OY=",
     "h1:iAS9NYD0DjjmKpge74+y6nRltWkF+jkEpavWOEgq4jY=",
     "zh:1ecb2adff52754fb4680c7cfe6143d1d8c264b00bb0c44f07f5583b1c7f978b8",
     "zh:1fbd155088cd5818ad5874e4d59ccf1801e4e1961ac0711442b963315f1967ab",
@@ -209,7 +213,7 @@ provider "registry.terraform.io/hashicorp/random" {
 
 provider "registry.terraform.io/hashicorp/tls" {
   version     = "3.1.0"
-  constraints = ">= 3.0.0, >= 3.1.0, 3.1.0, < 4.0.0"
+  constraints = "~> 3.0, >= 3.1.0, 3.1.0, < 4.0.0"
   hashes = [
     "h1:XTU9f6sGMZHOT8r/+LWCz2BZOPH127FBTPjMMEAAu1U=",
     "h1:fUJX8Zxx38e2kBln+zWr1Tl41X+OuiE++REjrEyiOM4=",

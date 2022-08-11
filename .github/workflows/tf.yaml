@@ -32,14 +32,14 @@ jobs:
       - name: Terraform Format
         run: terraform fmt -check --recursive
 
-          # - name: Terraform Validate Examples
-          #   working-directory: examples/complete
-          #   run: |
-          #     terraform init -backend=false
-          #     terraform validate ./
+      - name: Terraform Validate Examples
+        working-directory: examples/complete
+        run: |
+          terraform init -backend=false
+          terraform validate ./
 
       - name: Run Checkov action
         id: checkov
         uses: bridgecrewio/checkov-action@v12.1347.0
         with:
-          quiet: true 
+          quiet: true
