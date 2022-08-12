@@ -62,12 +62,13 @@ module "example-complete" {
   }
 
   config_velero = {
-    install = false
+    install = true
     config_bucket = {
       enable      = true,
       existing_id = module.exising_backups.s3.id,
       server_side_encryption_configuration = {
         alias = "alias/existing-bucket"
+        type  = "aws:kms"
       }
 
     }
