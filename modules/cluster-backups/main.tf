@@ -3,7 +3,6 @@ locals {
     type = "aws:kms"
   } : local.config_bucket.server_side_encryption_configuration
 
-  bucket_exists = local.config_bucket.enable || local.config_bucket.existing_id != null
 }
 
 
@@ -11,7 +10,7 @@ module "backups_bucket" {
   count = local.config_bucket.enable ? 1 : 0
 
   source  = "skyfjell/s3/aws"
-  version = "1.0.4"
+  version = "1.0.5"
 
   use_prefix                           = false
   name                                 = "velero-backup"
@@ -39,8 +38,8 @@ module "backups_bucket" {
 }
 
 data "aws_s3_bucket" "this" {
-  count  = local.bucket_exists ? 1 : 0
-  bucket = local.config_bucket.existing_id != null ? local.config_bucket.existing_id : one(module.backups_bucket.*.s3_id)
+  count  = var.config_bucket.enable ? 1 : 0
+  bucket = local.config_bucket.existing_id != null ? local.config_bucket.existing_id : one(module.backups_bucket.*.s3.id)
 }
 
 resource "helm_release" "velero" {
@@ -64,7 +63,7 @@ resource "helm_release" "velero" {
     configuration = {
       provider = "aws"
       backupStorageLocation = {
-        bucket = data.aws_s3_bucket.this.0.id
+        bucket = one(data.aws_s3_bucket.this.*.id)
         config = {
           region = data.aws_region.current.name
           s3Url  = "https://s3.us-east-2.amazonaws.com"
@@ -89,7 +88,7 @@ resource "helm_release" "velero" {
     serviceAccount = {
       server = {
         annotations = {
-          "eks.amazonaws.com/role-arn" = aws_iam_role.velero.0.arn
+          "eks.amazonaws.com/role-arn" = one(aws_iam_role.velero.*.arn)
         }
       }
     }

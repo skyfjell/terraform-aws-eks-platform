@@ -1,7 +1,31 @@
+locals {
+  sse_type  = try(local.config_bucket.server_side_encryption_configuration.type, null)
+  kms_alias = try(local.config_bucket.server_side_encryption_configuration.alias, null)
+  kms_id    = try(local.config_bucket.server_side_encryption_configuration.kms_master_key_id, null)
+  use_kms   = local.config_bucket.enable && local.sse_type == "aws:kms"
+}
+
+
+data "aws_kms_key" "kms" {
+  count  = local.use_kms ? 1 : 0
+  key_id = local.config_bucket.enable ? one(module.backups_bucket.*.kms_arn) : try(coalesce(local.kms_alias), coalesce(local.kms_id), "")
+}
+
+data "aws_iam_policy_document" "kms" {
+  count = local.use_kms ? 1 : 0
+  statement {
+    actions = [
+      "kms:*"
+    ]
+    resources = [one(data.aws_kms_key.kms.*.arn)]
+  }
+}
 
 data "aws_iam_policy_document" "velero" {
   count = local.install ? 1 : 0
   // checkov:skip=CKV_AWS_111: Conditions on managed tags constrain
+
+  override_policy_documents = try([coalesce(one(data.aws_iam_policy_document.kms.*.json))], [])
   statement {
     actions = [
       "s3:GetObject",
@@ -10,16 +34,14 @@ data "aws_iam_policy_document" "velero" {
       "s3:AbortMultipartUpload",
       "s3:ListMultipartUploadParts"
     ]
-    resources = [
-      "${data.aws_s3_bucket.this.0.arn}/*"
-    ]
+    resources = try(["${coalesce(one(data.aws_s3_bucket.this.*.arn))}"], [])
   }
 
   statement {
     actions = [
       "s3:ListBucket"
     ]
-    resources = [data.aws_s3_bucket.this.0.arn]
+    resources = try([coalesce(one(data.aws_s3_bucket.this.*.arn))], [])
   }
 
   statement {
@@ -51,6 +73,7 @@ data "aws_iam_policy_document" "velero" {
       values   = ["terraform-aws-eks-platform"]
     }
   }
+
 }
 
 data "aws_iam_policy_document" "velero_assume" {
@@ -80,7 +103,7 @@ resource "aws_iam_policy" "velero" {
   count = local.install ? 1 : 0
 
   name_prefix = "velero_backups_policy"
-  policy      = data.aws_iam_policy_document.velero.0.json
+  policy      = one(data.aws_iam_policy_document.velero.*.json)
   description = "Velero s3 IAM access"
   tags        = local.labels.tags
 }

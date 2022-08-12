@@ -14,6 +14,22 @@ locals {
   ]
 }
 
+module "exising_backups" {
+  source  = "skyfjell/s3/aws"
+  version = "1.0.5"
+
+  use_prefix = false
+  name       = "my-backup"
+  logging    = null
+  server_side_encryption_configuration = {
+    alias = "alias/existing-bucket"
+    type  = "aws:kms"
+  }
+
+  labels = module.labels
+}
+
+
 module "example-complete" {
   source = "../../"
 
@@ -48,7 +64,12 @@ module "example-complete" {
   config_velero = {
     install = false
     config_bucket = {
-      enable = true,
+      enable      = true,
+      existing_id = module.exising_backups.s3.id,
+      server_side_encryption_configuration = {
+        alias = "alias/existing-bucket"
+      }
+
     }
   }
 
