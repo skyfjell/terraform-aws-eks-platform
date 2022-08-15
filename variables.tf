@@ -53,14 +53,15 @@ variable "config_dns" {
         domain  = string
       }
     ))
-    irsa = optional(object({
-      service_account = string
-      namespace       = string
-    }))
+    irsa = object({
+      service_account = optional(string)
+      namespace       = optional(string)
+    })
   })
 
   default = {
     domain_zones = [],
+    irsa         = {}
   }
 }
 
