@@ -40,6 +40,30 @@ variable "managed_node_groups" {
   default     = {}
 }
 
+variable "config_dns" {
+  description = <<EOT
+  Configuration of DNS. Support for a list of existing domain zones and
+  IRSA support for related DNS actions.
+  EOT
+
+  type = object({
+    domain_zones = list(object(
+      {
+        zone_id = string
+        domain  = string
+      }
+    ))
+    irsa = optional(object({
+      service_account = string
+      namespace       = string
+    }))
+  })
+
+  default = {
+    domain_zones = [],
+  }
+}
+
 variable "domain_zones" {
   description = "ExternalDNS Managed Domains"
 
