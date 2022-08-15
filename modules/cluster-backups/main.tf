@@ -64,10 +64,10 @@ resource "helm_release" "velero" {
       provider = "aws"
       backupStorageLocation = {
         bucket = one(data.aws_s3_bucket.this.*.id)
-        config = {
+        config = merge({
           region = data.aws_region.current.name
           s3Url  = "https://s3.us-east-2.amazonaws.com"
-        }
+        }, local.use_kms ? { kmsKeyId = one(data.aws_kms_key.kms.*.arn) } : {})
       }
       volumeSnapshotLocation = {
         name = "default"

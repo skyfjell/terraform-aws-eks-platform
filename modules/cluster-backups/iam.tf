@@ -14,6 +14,7 @@ data "aws_kms_key" "kms" {
 data "aws_iam_policy_document" "kms" {
   count = local.use_kms ? 1 : 0
   statement {
+    sid = "KMSAccess"
     actions = [
       "kms:*"
     ]
@@ -21,12 +22,11 @@ data "aws_iam_policy_document" "kms" {
   }
 }
 
-data "aws_iam_policy_document" "velero" {
+data "aws_iam_policy_document" "backups" {
   count = local.install ? 1 : 0
   // checkov:skip=CKV_AWS_111: Conditions on managed tags constrain
-
-  override_policy_documents = try([coalesce(one(data.aws_iam_policy_document.kms.*.json))], [])
   statement {
+    sid = "S3Bucket"
     actions = [
       "s3:GetObject",
       "s3:DeleteObject",
@@ -38,6 +38,7 @@ data "aws_iam_policy_document" "velero" {
   }
 
   statement {
+    sid = "S3List"
     actions = [
       "s3:ListBucket"
     ]
@@ -45,6 +46,7 @@ data "aws_iam_policy_document" "velero" {
   }
 
   statement {
+    sid = "EC2List"
     actions = [
       "ec2:DescribeVolumes",
       "ec2:DescribeSnapshots",
@@ -73,6 +75,16 @@ data "aws_iam_policy_document" "velero" {
       values   = ["terraform-aws-eks-platform"]
     }
   }
+}
+
+
+
+data "aws_iam_policy_document" "velero" {
+  count = local.install ? 1 : 0
+
+  source_policy_documents = concat([
+    one(data.aws_iam_policy_document.backups.*.json)],
+  local.use_kms ? [one(data.aws_iam_policy_document.kms.*.json)] : [])
 
 }
 
