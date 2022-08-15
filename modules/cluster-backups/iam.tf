@@ -81,7 +81,7 @@ data "aws_iam_policy_document" "backups" {
 
 data "aws_iam_policy_document" "velero" {
   source_policy_documents = concat([
-    data.aws_iam_policy_document.backup.json],
+    data.aws_iam_policy_document.backups.json],
   local.use_kms ? [one(data.aws_iam_policy_document.kms.*.json)] : [])
 
 }
