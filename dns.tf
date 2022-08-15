@@ -79,8 +79,9 @@ data "aws_iam_policy_document" "external_dns_policy_doc" {
 }
 
 data "aws_iam_policy_document" "assume_policy_doc" {
+  source_policy_documents = [data.aws_iam_policy_document.eks_assume_role_policy]
   statement {
-    sid     = "AssumeRolePolicyStatement"
+    sid     = "AssumeRolePolicyStatementNode"
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
     principals {
@@ -88,11 +89,12 @@ data "aws_iam_policy_document" "assume_policy_doc" {
       identifiers = ["ec2.amazonaws.com"]
     }
     condition {
-      test     = "StringEquals"
+      test     = "ForAnyValue:StringEquals"
       variable = "aws:ResourceTag/eks:cluster-name"
       values   = [local.labels.id]
     }
   }
+
 }
 
 // ## Policies
