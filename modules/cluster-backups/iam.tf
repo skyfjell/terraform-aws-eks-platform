@@ -80,8 +80,10 @@ data "aws_iam_policy_document" "backups" {
 
 
 data "aws_iam_policy_document" "velero" {
+  count = local.install ? 1 : 0
+
   source_policy_documents = concat([
-    data.aws_iam_policy_document.backups.json],
+    one(data.aws_iam_policy_document.backups.*.json)],
   local.use_kms ? [one(data.aws_iam_policy_document.kms.*.json)] : [])
 
 }
