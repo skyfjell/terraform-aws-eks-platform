@@ -50,3 +50,5 @@ output "flux" {
     namespace = local.config_flux.install ? module.flux_git_repository.0.namespace : null
   }
 }
+
+output "test" { value = local.config_dns }
