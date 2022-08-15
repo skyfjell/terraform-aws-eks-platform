@@ -22,12 +22,10 @@ locals {
     view = var.users.view == null ? [] : var.users.view,
   }
 
-  config_dns = defaults(var.config_dns, {
-    irsa = {
-      service_account = "externaldns"
-      namespace       = "externaldns"
-    }
-  })
+  config_dns = merge(var.config_dns, { irsa = {
+    service_account = try(var.config_dns.irsa.service_account, "external-dns")
+    namespace       = try(var.config_dns.irsa.namespace, "external-dns")
+  } })
 
   # Services and Applications
   config_autoscaler = var.config_autoscaler
