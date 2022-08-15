@@ -106,7 +106,6 @@ If the cluster has been destroyed, but the run errored out and needed to be re-a
 | <a name="output_cluster"></a> [cluster](#output\_cluster) | Ouput from terraform-aws-eks cluster module |
 | <a name="output_cluster_roles"></a> [cluster\_roles](#output\_cluster\_roles) | n/a |
 | <a name="output_flux"></a> [flux](#output\_flux) | Object with flux information. |
-| <a name="output_test"></a> [test](#output\_test) | n/a |
 | <a name="output_velero_storage"></a> [velero\_storage](#output\_velero\_storage) | S3 object with `id` and `arn` for velero storage bucket. If velero isn't used, will be null |
 <!-- END_TF_DOCS -->
 <!-- prettier-ignore-end -->
