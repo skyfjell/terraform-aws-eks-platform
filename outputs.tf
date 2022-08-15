@@ -51,4 +51,3 @@ output "flux" {
   }
 }
 
-output "test" { value = local.config_dns }
