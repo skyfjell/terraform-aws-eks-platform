@@ -10,6 +10,8 @@ locals {
   // The ses module automatically add a 'Name' tag so we need to ignore 
   //   ours for the time to avoid the conflict
   tags_prepared         = { for k, v in local.labels.tags : k => v if lower(k) != "name" }
+  domain_zones          = local.config_dns.domain_zones
+  service_account       = "system:serviceaccount:${local.config_dns.irsa.namespace}:${local.config_dns.irsa.service_account}"
   configure_externaldns = length(local.domain_zones) > 0
   configure_extra_dns   = length(local.domain_zones) > 1 ? slice(local.domain_zones, 1, length(local.domain_zones)) : []
 
@@ -80,6 +82,26 @@ data "aws_iam_policy_document" "external_dns_policy_doc" {
 
 data "aws_iam_policy_document" "assume_policy_doc" {
   statement {
+    sid     = "AssumeRoleWithWebIdentity"
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    effect  = "Allow"
+
+    principals {
+      type        = "Federated"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${local.oidc_id}"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "${local.oidc_id}:aud"
+      values   = ["sts.amazonaws.com"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "${local.oidc_id}:sub"
+      values   = [local.service_account]
+    }
+  }
+  statement {
     sid     = "AssumeRolePolicyStatement"
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
@@ -93,6 +115,7 @@ data "aws_iam_policy_document" "assume_policy_doc" {
       values   = [local.labels.id]
     }
   }
+
 }
 
 // ## Policies
