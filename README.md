@@ -41,7 +41,7 @@ If the cluster has been destroyed, but the run errored out and needed to be re-a
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cluster"></a> [cluster](#module\_cluster) | terraform-aws-modules/eks/aws | 18.26.6 |
+| <a name="module_cluster"></a> [cluster](#module\_cluster) | terraform-aws-modules/eks/aws | 18.28.0 |
 | <a name="module_flux_git_repository"></a> [flux\_git\_repository](#module\_flux\_git\_repository) | skyfjell/git-repository/flux | 1.0.1 |
 | <a name="module_flux_install"></a> [flux\_install](#module\_flux\_install) | skyfjell/install/flux | 1.0.2 |
 | <a name="module_flux_kustomization"></a> [flux\_kustomization](#module\_flux\_kustomization) | skyfjell/kustomization/flux | 1.0.1 |
