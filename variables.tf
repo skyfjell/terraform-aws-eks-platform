@@ -23,7 +23,7 @@ variable "cluster" {
   type = object({
     install                    = optional(bool)
     destroy                    = optional(bool)
-    create_node_security_group = true
+    create_node_security_group = optional(bool)
     version                    = string
     aws_auth_roles = optional(list(object({
       username = string,
