@@ -1,6 +1,6 @@
 module "cluster" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "18.26.6"
+  version = "18.28.0"
 
   create                   = local.cluster.install
   cluster_name             = local.labels.id
@@ -14,6 +14,9 @@ module "cluster" {
 
   vpc_id     = local.cluster.vpc_id
   subnet_ids = local.cluster.subnet_ids
+  node_security_group_tags = {
+    "kubernetes.io/cluster/${local.labels.id}" = "node"
+  }
 
   eks_managed_node_groups = local.cluster.install ? {
     default = {
