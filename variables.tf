@@ -21,9 +21,10 @@ variable "cluster" {
   description = "Cluster Configuration"
 
   type = object({
-    install = optional(bool)
-    destroy = optional(bool)
-    version = string
+    install                    = optional(bool)
+    destroy                    = optional(bool)
+    create_node_security_group = true
+    version                    = string
     aws_auth_roles = optional(list(object({
       username = string,
       rolearn  = string,

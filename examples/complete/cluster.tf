@@ -46,7 +46,7 @@ module "example-complete" {
   }
 
   config_velero = {
-    install = false
+    install = true
     config_bucket = {
       enable = true,
     }

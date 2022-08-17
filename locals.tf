@@ -10,8 +10,9 @@ locals {
 
   # Cluster Config
   cluster = defaults(var.cluster, {
-    install = true,
-    destroy = false
+    install                    = true
+    destroy                    = false
+    create_node_security_group = true
   })
 
   managed_node_groups = var.managed_node_groups

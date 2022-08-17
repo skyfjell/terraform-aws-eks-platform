@@ -2,12 +2,13 @@ module "cluster" {
   source  = "terraform-aws-modules/eks/aws"
   version = "18.26.6"
 
-  create                   = local.cluster.install
-  cluster_name             = local.labels.id
-  cluster_version          = local.cluster.version
-  enable_irsa              = true
-  iam_role_use_name_prefix = false
-  create_kms_key           = true
+  create                     = local.cluster.install
+  cluster_name               = local.labels.id
+  cluster_version            = local.cluster.version
+  enable_irsa                = true
+  iam_role_use_name_prefix   = false
+  create_kms_key             = true
+  create_node_security_group = try(local.cluster.create_node_security_group, true)
 
   # Bug tracker: https://github.com/terraform-aws-modules/terraform-aws-eks/issues/2169
   kms_key_enable_default_policy = true

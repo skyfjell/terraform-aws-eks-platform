@@ -64,7 +64,7 @@ module "example-complete" {
   config_velero = {
     install = true
     config_bucket = {
-      enable      = true,
+      enable      = false,
       existing_id = module.exising_backups.s3.id,
       server_side_encryption_configuration = {
         alias = "alias/existing-bucket"

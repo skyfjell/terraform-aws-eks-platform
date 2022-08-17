@@ -7,7 +7,7 @@ locals {
 
 
 module "backups_bucket" {
-  count = local.config_bucket.enable ? 1 : 0
+  count = local.config_bucket.enable && local.config_bucket.existing_id == null ? 1 : 0
 
   source  = "skyfjell/s3/aws"
   version = "1.0.5"
