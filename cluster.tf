@@ -15,7 +15,7 @@ module "cluster" {
   vpc_id     = local.cluster.vpc_id
   subnet_ids = local.cluster.subnet_ids
   node_security_group_tags = {
-    "kubernetes.io/cluster/${local.labels.id}" = null
+    "kubernetes.io/cluster/${local.labels.id}" = "node"
   }
 
   eks_managed_node_groups = local.cluster.install ? {
