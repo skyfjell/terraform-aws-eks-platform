@@ -44,7 +44,8 @@ module "cluster" {
 
   cluster_addons = local.cluster.version > "1.22" ? {
     "aws-ebs-csi-driver" = {
-      resolve_conflicts = "OVERWRITE"
+      resolve_conflicts        = "OVERWRITE"
+      service_account_role_arn = module.ebs_csi_irsa_role.iam_role_arn
     }
   } : {}
 
