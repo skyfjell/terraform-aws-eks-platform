@@ -43,26 +43,20 @@ variable "managed_node_groups" {
 variable "config_dns" {
   description = <<EOT
   Configuration of DNS. Support for a list of existing domain zones and
-  IRSA support for related DNS actions. Includes cert-manager configuration
-  for route53 challenges.
+  IRSA support for related DNS services.
   EOT
 
   type = object({
-    domain_zones = list(object(
-      {
-        zone_id = string
-        domain  = string
-      }
-    ))
-    irsa = optional(object({
+    domain_zone_ids = list(string)
+    service_accounts = optional(object({
       external_dns = optional(list(string))
       cert_manager = optional(list(string))
     }))
   })
 
   default = {
-    domain_zones = [],
-    irsa = {
+    domain_zone_ids = [],
+    service_accounts = {
       external_dns = ["external-dns:external-dns"]
       cert_manager = ["cert-manager:cert-manager"]
     }

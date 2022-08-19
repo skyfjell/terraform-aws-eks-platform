@@ -1,7 +1,3 @@
-locals {
-  hosted_zone_arns = [for x in local.config_dns.domain_zones : "arn:aws:route53:::hostedzone/${x.zone_id}"]
-}
-
 module "platform_view_iam" {
   count = length(local.users.view) > 0 ? 1 : 0
 
@@ -46,6 +42,7 @@ module "ebs_csi_irsa_role" {
 }
 
 module "cert_manager_irsa" {
+  count   = length(local.config_dns.service_accounts.cert_manager) > 0 ? 1 : 0
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.3.0"
 
@@ -56,12 +53,14 @@ module "cert_manager_irsa" {
   oidc_providers = {
     main = {
       provider_arn               = module.cluster.oidc_provider_arn
-      namespace_service_accounts = local.config_dns.irsa.cert_manager
+      namespace_service_accounts = local.config_dns.service_accounts.cert_manager
     }
   }
 }
 
 module "external_dns_irsa" {
+  count = length(local.config_dns.service_accounts.external_dns) > 0 ? 1 : 0
+
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.3.0"
 
@@ -72,7 +71,7 @@ module "external_dns_irsa" {
   oidc_providers = {
     main = {
       provider_arn               = module.cluster.oidc_provider_arn
-      namespace_service_accounts = local.config_dns.irsa.external_dns
+      namespace_service_accounts = local.config_dns.service_accounts.external_dns
     }
   }
 }
