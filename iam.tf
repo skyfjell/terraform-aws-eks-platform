@@ -26,7 +26,8 @@ module "platform_edit_iam" {
 
 
 module "ebs_csi_irsa_role" {
-  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "5.3.0"
 
   role_name = "ebs-csi-${local.labels.id}"
 
@@ -36,6 +37,41 @@ module "ebs_csi_irsa_role" {
     main = {
       provider_arn               = module.cluster.oidc_provider_arn
       namespace_service_accounts = ["kube-system:ebs-csi-node-sa", "kube-system:ebs-csi-controller-sa"]
+    }
+  }
+}
+
+module "cert_manager_irsa" {
+  count   = length(local.hosted_zone_arns) > 0 && length(local.config_dns.service_accounts.cert_manager) > 0 ? 1 : 0
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "5.3.0"
+
+  role_name                     = "cert-manager-${local.labels.id}"
+  attach_cert_manager_policy    = true
+  cert_manager_hosted_zone_arns = local.hosted_zone_arns
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.cluster.oidc_provider_arn
+      namespace_service_accounts = local.config_dns.service_accounts.cert_manager
+    }
+  }
+}
+
+module "external_dns_irsa" {
+  count = length(local.hosted_zone_arns) > 0 && length(local.config_dns.service_accounts.external_dns) > 0 ? 1 : 0
+
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "5.3.0"
+
+  role_name                     = "external-dns-${local.labels.id}"
+  attach_external_dns_policy    = true
+  external_dns_hosted_zone_arns = local.hosted_zone_arns
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.cluster.oidc_provider_arn
+      namespace_service_accounts = local.config_dns.service_accounts.external_dns
     }
   }
 }

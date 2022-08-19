@@ -22,9 +22,10 @@ locals {
     view = var.users.view == null ? [] : var.users.view,
   }
 
-  config_dns = merge(var.config_dns, { irsa = {
-    service_account = try(var.config_dns.irsa.service_account, "external-dns")
-    namespace       = try(var.config_dns.irsa.namespace, "external-dns")
+  config_dns = merge(var.config_dns, {
+    service_accounts = {
+      external_dns = try(var.config_dns.irsa.external-dns, ["external-dns:external-dns"])
+      cert_manager = try(var.config_dns.irsa.external-dns, ["cert-manager:cert-manager"])
   } })
 
   # Services and Applications

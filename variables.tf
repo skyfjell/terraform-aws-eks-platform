@@ -43,43 +43,27 @@ variable "managed_node_groups" {
 variable "config_dns" {
   description = <<EOT
   Configuration of DNS. Support for a list of existing domain zones and
-  IRSA support for related DNS actions.
+  IRSA support for related DNS services.
   EOT
 
   type = object({
-    domain_zones = list(object(
-      {
-        zone_id = string
-        domain  = string
-      }
-    ))
-    irsa = optional(object({
-      service_account = optional(string)
-      namespace       = optional(string)
+    hosted_zone_ids = list(string)
+    service_accounts = optional(object({
+      external_dns = optional(list(string))
+      cert_manager = optional(list(string))
     }))
   })
 
   default = {
-    domain_zones = [],
-    irsa = {
-      service_account = "external-dns"
-      namespace       = "external-dns"
+    hosted_zone_ids = [],
+    service_accounts = {
+      external_dns = ["external-dns:external-dns"]
+      cert_manager = ["cert-manager:cert-manager"]
     }
   }
 }
 
-variable "domain_zones" {
-  description = "ExternalDNS Managed Domains"
 
-  type = list(object(
-    {
-      zone_id = string
-      domain  = string
-    }
-  ))
-
-  default = []
-}
 
 variable "config_autoscaler" {
   description = "Cluster Autoscaler Configuration"
