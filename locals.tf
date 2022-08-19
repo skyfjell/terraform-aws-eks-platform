@@ -38,6 +38,8 @@ locals {
     }
   })
 
+  hosted_zone_arns = [for x in local.config_dns.hosted_zone_ids : "arn:aws:route53:::hostedzone/${x}"]
+
 
   config_velero = defaults(var.config_velero, {
     install = true
