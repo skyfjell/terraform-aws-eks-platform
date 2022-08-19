@@ -47,7 +47,7 @@ variable "config_dns" {
   EOT
 
   type = object({
-    domain_zone_ids = list(string)
+    hosted_zone_ids = list(string)
     service_accounts = optional(object({
       external_dns = optional(list(string))
       cert_manager = optional(list(string))
@@ -55,7 +55,7 @@ variable "config_dns" {
   })
 
   default = {
-    domain_zone_ids = [],
+    hosted_zone_ids = [],
     service_accounts = {
       external_dns = ["external-dns:external-dns"]
       cert_manager = ["cert-manager:cert-manager"]
