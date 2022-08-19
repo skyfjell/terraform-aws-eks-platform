@@ -23,8 +23,8 @@ locals {
   }
 
   config_dns = merge(var.config_dns, { irsa = {
-    service_account = try(var.config_dns.irsa.service_account, "external-dns")
-    namespace       = try(var.config_dns.irsa.namespace, "external-dns")
+    external_dns = [for sa in try(var.config_dns.irsa.external-dns, []) : sa]
+    cert_manager = [for sa in try(var.config_dns.irsa.external-dns, []) : sa]
   } })
 
   # Services and Applications

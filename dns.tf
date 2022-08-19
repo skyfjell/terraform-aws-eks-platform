@@ -11,10 +11,8 @@ locals {
   //   ours for the time to avoid the conflict
   tags_prepared         = { for k, v in local.labels.tags : k => v if lower(k) != "name" }
   domain_zones          = local.config_dns.domain_zones
-  service_account       = "system:serviceaccount:${local.config_dns.irsa.namespace}:${local.config_dns.irsa.service_account}"
   configure_externaldns = length(local.domain_zones) > 0
   configure_extra_dns   = length(local.domain_zones) > 1 ? slice(local.domain_zones, 1, length(local.domain_zones)) : []
-
 }
 
 module "ses" {
@@ -80,73 +78,5 @@ data "aws_iam_policy_document" "external_dns_policy_doc" {
   }
 }
 
-data "aws_iam_policy_document" "assume_policy_doc" {
-  statement {
-    sid     = "AssumeRoleWithWebIdentity"
-    actions = ["sts:AssumeRoleWithWebIdentity"]
-    effect  = "Allow"
 
-    principals {
-      type        = "Federated"
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${local.oidc_id}"]
-    }
-    condition {
-      test     = "StringEquals"
-      variable = "${local.oidc_id}:aud"
-      values   = ["sts.amazonaws.com"]
-    }
-    condition {
-      test     = "StringEquals"
-      variable = "${local.oidc_id}:sub"
-      values   = [local.service_account]
-    }
-  }
-  statement {
-    sid     = "AssumeRolePolicyStatement"
-    effect  = "Allow"
-    actions = ["sts:AssumeRole"]
-    principals {
-      type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
-    }
-    condition {
-      test     = "StringEquals"
-      variable = "aws:ResourceTag/eks:cluster-name"
-      values   = [local.labels.id]
-    }
-  }
-
-}
-
-// ## Policies
-
-resource "aws_iam_policy" "externaldns_service_role" {
-  count = local.configure_externaldns ? 1 : 0
-
-  name        = "${local.labels.id}-external-dns-role"
-  path        = "/"
-  description = "EKS role for External-DNS"
-  policy      = data.aws_iam_policy_document.external_dns_policy_doc[0].json
-}
-
-// ## Roles
-
-resource "aws_iam_role" "externaldns_service_role" {
-  name               = "${local.labels.id}-external-dns"
-  assume_role_policy = data.aws_iam_policy_document.assume_policy_doc.json
-}
-
-// ## Attachments
-
-resource "aws_iam_role_policy_attachment" "externaldns_service_role" {
-  count      = local.configure_externaldns ? 1 : 0
-  role       = aws_iam_role.externaldns_service_role.name
-  policy_arn = aws_iam_policy.externaldns_service_role[0].arn
-}
-
-resource "aws_iam_role_policy_attachment" "externaldns_service_list" {
-  count      = local.configure_externaldns && local.cluster.install ? 1 : 0
-  role       = module.cluster.cluster_iam_role_name
-  policy_arn = aws_iam_policy.externaldns_service_role[0].arn
-}
 
