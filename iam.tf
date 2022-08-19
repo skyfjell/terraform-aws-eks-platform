@@ -42,7 +42,7 @@ module "ebs_csi_irsa_role" {
 }
 
 module "cert_manager_irsa" {
-  count   = length(local.config_dns.service_accounts.cert_manager) > 0 ? 1 : 0
+  count   = length(concat(local.hosted_zone_arns, local.config_dns.service_accounts.cert_manager)) > 0 ? 1 : 0
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.3.0"
 
@@ -59,7 +59,7 @@ module "cert_manager_irsa" {
 }
 
 module "external_dns_irsa" {
-  count = length(local.config_dns.service_accounts.external_dns) > 0 ? 1 : 0
+  count = length(concat(local.hosted_zone_arns, local.config_dns.service_accounts.external_dns)) > 0 ? 1 : 0
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.3.0"
