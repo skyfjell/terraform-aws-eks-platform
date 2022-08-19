@@ -41,12 +41,14 @@ If the cluster has been destroyed, but the run errored out and needed to be re-a
 
 | Name | Source | Version |
 |------|--------|---------|
+| <a name="module_cert_manager_irsa"></a> [cert\_manager\_irsa](#module\_cert\_manager\_irsa) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.3.0 |
 | <a name="module_cluster"></a> [cluster](#module\_cluster) | terraform-aws-modules/eks/aws | 18.28.0 |
-| <a name="module_ebs_csi_irsa_role"></a> [ebs\_csi\_irsa\_role](#module\_ebs\_csi\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | n/a |
+| <a name="module_ebs_csi_irsa_role"></a> [ebs\_csi\_irsa\_role](#module\_ebs\_csi\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.3.0 |
+| <a name="module_external_dns_irsa"></a> [external\_dns\_irsa](#module\_external\_dns\_irsa) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.3.0 |
 | <a name="module_flux_git_repository"></a> [flux\_git\_repository](#module\_flux\_git\_repository) | skyfjell/git-repository/flux | 1.0.1 |
 | <a name="module_flux_install"></a> [flux\_install](#module\_flux\_install) | skyfjell/install/flux | 1.0.2 |
 | <a name="module_flux_kustomization"></a> [flux\_kustomization](#module\_flux\_kustomization) | skyfjell/kustomization/flux | 1.0.1 |
-| <a name="module_karpenter_irsa"></a> [karpenter\_irsa](#module\_karpenter\_irsa) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.0.0 |
+| <a name="module_karpenter_irsa"></a> [karpenter\_irsa](#module\_karpenter\_irsa) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.3.0 |
 | <a name="module_platform_edit_iam"></a> [platform\_edit\_iam](#module\_platform\_edit\_iam) | ./modules/cluster-iam | n/a |
 | <a name="module_platform_view_iam"></a> [platform\_view\_iam](#module\_platform\_view\_iam) | ./modules/cluster-iam | n/a |
 | <a name="module_ses"></a> [ses](#module\_ses) | cloudposse/ses/aws | 0.22.3 |
@@ -58,13 +60,9 @@ If the cluster has been destroyed, but the run errored out and needed to be re-a
 |------|------|
 | [aws_iam_instance_profile.karpenter](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile) | resource |
 | [aws_iam_policy.autoscaler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
-| [aws_iam_policy.externaldns_service_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_role.autoscaler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.eks_oidc_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
-| [aws_iam_role.externaldns_service_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy_attachment.autoscaler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_iam_role_policy_attachment.externaldns_service_list](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_iam_role_policy_attachment.externaldns_service_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_route53_record.amazonses_verification_record](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
 | [aws_ses_domain_identity.ses_domain](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ses_domain_identity) | resource |
 | [helm_release.karpenter](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
@@ -76,7 +74,6 @@ If the cluster has been destroyed, but the run errored out and needed to be re-a
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_eks_cluster.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster) | data source |
 | [aws_eks_cluster_auth.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster_auth) | data source |
-| [aws_iam_policy_document.assume_policy_doc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.autoscaler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.autoscaler_assume](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.eks_assume_role_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -90,11 +87,10 @@ If the cluster has been destroyed, but the run errored out and needed to be re-a
 |------|-------------|------|---------|:--------:|
 | <a name="input_cluster"></a> [cluster](#input\_cluster) | Cluster Configuration | <pre>object({<br>    install = optional(bool)<br>    destroy = optional(bool)<br>    version = string<br>    aws_auth_roles = optional(list(object({<br>      username = string,<br>      rolearn  = string,<br>      groups   = list(string),<br>    })))<br>    subnet_ids = list(string)<br>    vpc_id     = string<br>  })</pre> | n/a | yes |
 | <a name="input_config_autoscaler"></a> [config\_autoscaler](#input\_config\_autoscaler) | Cluster Autoscaler Configuration | <pre>object({<br>    enable_service_account = bool<br>    namespace              = string<br>  })</pre> | <pre>{<br>  "enable_service_account": false,<br>  "namespace": "autoscaler"<br>}</pre> | no |
-| <a name="input_config_dns"></a> [config\_dns](#input\_config\_dns) | Configuration of DNS. Support for a list of existing domain zones and<br>  IRSA support for related DNS actions. | <pre>object({<br>    domain_zones = list(object(<br>      {<br>        zone_id = string<br>        domain  = string<br>      }<br>    ))<br>    irsa = optional(object({<br>      service_account = optional(string)<br>      namespace       = optional(string)<br>    }))<br>  })</pre> | <pre>{<br>  "domain_zones": [],<br>  "irsa": {<br>    "namespace": "external-dns",<br>    "service_account": "external-dns"<br>  }<br>}</pre> | no |
+| <a name="input_config_dns"></a> [config\_dns](#input\_config\_dns) | Configuration of DNS. Support for a list of existing domain zones and<br>  IRSA support for related DNS actions. Includes cert-manager configuration<br>  for route53 challenges. | <pre>object({<br>    domain_zones = list(object(<br>      {<br>        zone_id = string<br>        domain  = string<br>      }<br>    ))<br>    irsa = optional(object({<br>      external_dns = optional(list(string))<br>      cert_manager = optional(list(string))<br>    }))<br>  })</pre> | <pre>{<br>  "domain_zones": [],<br>  "irsa": {<br>    "cert_manager": [<br>      "cert-manager:cert-manager"<br>    ],<br>    "external_dns": [<br>      "external-dns:external-dns"<br>    ]<br>  }<br>}</pre> | no |
 | <a name="input_config_flux"></a> [config\_flux](#input\_config\_flux) | Flux Configuration | <pre>object({<br>    install = optional(bool)<br>    git = object({<br>      name            = string,<br>      url             = string,<br>      path            = string,<br>      known_hosts     = list(string)<br>      create_ssh_key  = optional(bool)<br>      existing_secret = optional(string)<br>      random_suffix   = optional(bool)<br>      ref = object({<br>        branch = optional(string)<br>        commit = optional(string)<br>        tag    = optional(string)<br>        semver = optional(string)<br>      }),<br>    })<br>  })</pre> | n/a | yes |
 | <a name="input_config_karpenter"></a> [config\_karpenter](#input\_config\_karpenter) | Karpenter Configuration | <pre>object({<br>    install = bool<br>  })</pre> | <pre>{<br>  "install": true<br>}</pre> | no |
 | <a name="input_config_velero"></a> [config\_velero](#input\_config\_velero) | Configures velero and the velero bucket. An external velero bucket that <br>    is managed externally from this module can be passed in via <br>    `config_bucket = {id = "123"}`. If `config_bucket = {enable = true}` <br>    even with `install = false` the bucket will remain created. | <pre>object({<br>    install = optional(bool)<br>    version = optional(string)<br>    config_bucket = optional(object({<br>      existing_id = optional(string)<br>      enable      = optional(bool)<br>      server_side_encryption_configuration = optional(object({<br>        type              = optional(string)<br>        kms_master_key_id = optional(string)<br>        alias             = optional(string)<br>      }))<br>    }))<br>    service_accounts = optional(list(string))<br>  })</pre> | <pre>{<br>  "config_bucket": {<br>    "enable": true,<br>    "server_side_encryption_configuration": {<br>      "type": "aws:kms"<br>    }<br>  },<br>  "install": true,<br>  "version": "2.30.1"<br>}</pre> | no |
-| <a name="input_domain_zones"></a> [domain\_zones](#input\_domain\_zones) | ExternalDNS Managed Domains | <pre>list(object(<br>    {<br>      zone_id = string<br>      domain  = string<br>    }<br>  ))</pre> | `[]` | no |
 | <a name="input_labels"></a> [labels](#input\_labels) | Instance of labels module | <pre>object(<br>    {<br>      id   = string<br>      tags = any<br>    }<br>  )</pre> | n/a | yes |
 | <a name="input_managed_node_groups"></a> [managed\_node\_groups](#input\_managed\_node\_groups) | EKS Managed Node Groups | `map(object({}))` | `{}` | no |
 | <a name="input_users"></a> [users](#input\_users) | Map of lists of user ARNs | <pre>object({<br>    edit = optional(list(string)),<br>    view = optional(list(string)),<br>  })</pre> | n/a | yes |
