@@ -105,15 +105,15 @@ variable "config_velero" {
   description = <<EOT
     Configures velero and the velero bucket. An external velero bucket that 
     is managed externally from this module can be passed in via 
-    `config_bucket = {id = "123"}`. If `config_bucket = {enable = true}` 
-    even with `install = false` the bucket will remain created.
+    `config_bucket = {existing_id = ["123"]}`.  This list only expected length of 1.
+    If `config_bucket = {enable = true}` even with `install = false` the bucket will remain created.
   EOT
 
   type = object({
     install = optional(bool)
     version = optional(string)
     config_bucket = optional(object({
-      existing_id = optional(string)
+      existing_id = optional(list(string))
       enable      = optional(bool)
       server_side_encryption_configuration = optional(object({
         type              = optional(string)

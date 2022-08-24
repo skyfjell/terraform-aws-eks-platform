@@ -1,5 +1,5 @@
 locals {
-  sse_type  = try(local.config_bucket.server_side_encryption_configuration.type, null)
+  sse_type  = try(local.config_bucket.server_side_encryption_configuration.type, "aws:kms")
   kms_alias = try(local.config_bucket.server_side_encryption_configuration.alias, null)
   kms_id    = try(local.config_bucket.server_side_encryption_configuration.kms_master_key_id, null)
   use_kms   = local.config_bucket.enable && local.sse_type == "aws:kms"
@@ -8,7 +8,7 @@ locals {
 
 data "aws_kms_key" "kms" {
   count  = local.use_kms ? 1 : 0
-  key_id = local.config_bucket.enable ? one(module.backups_bucket.*.kms_arn) : try(coalesce(local.kms_alias), coalesce(local.kms_id), "")
+  key_id = local.config_bucket.enable && length(local.config_bucket.existing_id) == 0 ? one(module.backups_bucket.*.kms_arn) : try(coalesce(local.kms_alias), coalesce(local.kms_id), "")
 }
 
 data "aws_iam_policy_document" "kms" {
