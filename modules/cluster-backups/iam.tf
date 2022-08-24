@@ -8,7 +8,7 @@ locals {
 
 data "aws_kms_key" "kms" {
   count  = local.use_kms ? 1 : 0
-  key_id = local.config_bucket.enable && length(local.config_bucket.existing_id) == 0 ? one(module.backups_bucket.*.kms_arn) : try(coalesce(local.kms_alias), coalesce(local.kms_id), "")
+  key_id = local.config_bucket.enable && local.config_bucket.existing_id == null ? one(module.backups_bucket.*.kms_arn) : try(coalesce(local.kms_alias), coalesce(local.kms_id), "")
 }
 
 data "aws_iam_policy_document" "kms" {
