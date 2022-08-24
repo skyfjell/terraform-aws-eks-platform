@@ -6,7 +6,6 @@ locals {
   labels         = var.labels
   config_bucket = defaults(var.config_bucket, {
     enable = true
-    # existing_id = []
     server_side_encryption_configuration = {
       type = "aws:kms"
     }

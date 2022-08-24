@@ -46,7 +46,6 @@ locals {
     version = "2.30.1"
     config_bucket = {
       enable = true
-      # existing_id = null
       server_side_encryption_configuration = {
         type = "aws:kms"
       }

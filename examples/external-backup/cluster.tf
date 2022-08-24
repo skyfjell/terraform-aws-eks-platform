@@ -1,6 +1,4 @@
-/** This example will not run on first pass because the s3 bucket is assumed to be applied 
-previously so the `kms.arn` attribute is existing for data lookup
-*/
+/** This example will not run on first pass because the s3 bucket is assumed to be applied. This just highlights the use case*/
 
 locals {
   sub_map = {
@@ -70,7 +68,7 @@ module "example-complete" {
     install = true
     config_bucket = {
       enable      = true,
-      existing_id = [module.existing_backups.s3.id],
+      existing_id = module.existing_backups.s3.id,
       server_side_encryption_configuration = {
         alias = "alias/existing-bucket"
         type  = "aws:kms"

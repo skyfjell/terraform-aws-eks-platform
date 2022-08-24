@@ -8,7 +8,7 @@ locals {
 
 
 module "backups_bucket" {
-  count = local.config_bucket.enable && length(local.config_bucket.existing_id) == 0 ? 1 : 0
+  count = local.config_bucket.enable && local.config_bucket.existing_id == null ? 1 : 0
 
   source  = "skyfjell/s3/aws"
   version = "1.0.5"
@@ -40,7 +40,7 @@ module "backups_bucket" {
 
 data "aws_s3_bucket" "this" {
   count  = var.config_bucket.enable ? 1 : 0
-  bucket = length(local.config_bucket.existing_id) == 0 ? one(module.backups_bucket.*.s3.id) : one(local.config_bucket.existing_id)
+  bucket = local.config_bucket.existing_id == null ? one(module.backups_bucket.*.s3.id) : local.config_bucket.existing_id
 }
 
 resource "helm_release" "velero" {
