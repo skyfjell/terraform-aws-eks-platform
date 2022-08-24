@@ -3,11 +3,12 @@ locals {
     type = "aws:kms"
   } : local.config_bucket.server_side_encryption_configuration
 
+  # create_bucket = 
 }
 
 
 module "backups_bucket" {
-  count = local.config_bucket.enable ? 1 : 0
+  count = local.config_bucket.enable && local.config_bucket.existing_id == null ? 1 : 0
 
   source  = "skyfjell/s3/aws"
   version = "1.0.5"
@@ -20,7 +21,7 @@ module "backups_bucket" {
   labels = local.labels
 
   roles = local.install ? [{
-    name = aws_iam_role.velero.0.name
+    name = one(aws_iam_role.velero.*.name)
     mode = "RW"
   }] : []
 
@@ -39,7 +40,7 @@ module "backups_bucket" {
 
 data "aws_s3_bucket" "this" {
   count  = var.config_bucket.enable ? 1 : 0
-  bucket = local.config_bucket.existing_id != null ? local.config_bucket.existing_id : one(module.backups_bucket.*.s3.id)
+  bucket = local.config_bucket.existing_id == null ? one(module.backups_bucket.*.s3.id) : local.config_bucket.existing_id
 }
 
 resource "helm_release" "velero" {

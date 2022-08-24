@@ -1,3 +1,5 @@
+/** This example will not run on first pass because the s3 bucket is assumed to be applied. This just highlights the use case*/
+
 locals {
   sub_map = {
     "2a" = 0
@@ -14,7 +16,7 @@ locals {
   ]
 }
 
-module "exising_backups" {
+module "existing_backups" {
   source  = "skyfjell/s3/aws"
   version = "1.0.5"
 
@@ -61,11 +63,12 @@ module "example-complete" {
     view = [aws_iam_user.test_view.arn]
   }
 
+  # see note at top of file
   config_velero = {
     install = true
     config_bucket = {
       enable      = true,
-      existing_id = module.exising_backups.s3.id,
+      existing_id = module.existing_backups.s3.id,
       server_side_encryption_configuration = {
         alias = "alias/existing-bucket"
         type  = "aws:kms"
@@ -73,7 +76,6 @@ module "example-complete" {
 
     }
   }
-
 }
 
 locals {
