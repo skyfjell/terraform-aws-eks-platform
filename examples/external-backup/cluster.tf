@@ -76,11 +76,6 @@ module "example-complete" {
 
     }
   }
-
-  # depends_on = [
-  #   module.existing_backups
-  # ]
-
 }
 
 locals {
