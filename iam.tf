@@ -105,7 +105,7 @@ data "aws_iam_policy_document" "velero_kms" {
       "kms:DescribeKey",
     ]
     resources = [
-      local.kms_key_id
+      data.aws_kms_key.velero_kms.arn
     ]
   }
 
@@ -116,7 +116,7 @@ data "aws_iam_policy_document" "velero_kms" {
       "kms:RevokeGrant",
     ]
     resources = [
-      local.kms_key_id
+      data.aws_kms_key.velero_kms.arn
     ]
     condition {
       test     = "Bool"
