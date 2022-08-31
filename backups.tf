@@ -3,8 +3,7 @@ locals {
     type = "aws:kms"
   } : local.config_velero.server_side_encryption_configuration
   create_bucket = local.config_velero.enable && local.config_velero.existing_id == null
-  sse_type      = try(local.config_velero.server_side_encryption_configuration.type, "aws:kms")
-  use_kms       = local.config_velero.enable && local.sse_type == "aws:kms"
+  use_kms       = local.config_velero.enable && try(coalesce(local.config_velero.server_side_encryption_configuration.type), "aws:kms") == "aws:kms"
   kms_alias     = try(local.config_velero.server_side_encryption_configuration.alias, null)
   kms_id        = try(local.config_velero.server_side_encryption_configuration.kms_master_key_id, null)
   kms_key_id    = local.config_velero.enable && local.config_velero.existing_id == null ? one(module.velero_bucket.*.kms_arn) : try(coalesce(local.kms_alias), coalesce(local.kms_id), "")
