@@ -76,3 +76,66 @@ module "external_dns_irsa" {
   }
 }
 
+module "velero_irsa" {
+  count   = local.config_velero.enable && length(local.config_velero.service_accounts.velero) > 0 ? 1 : 0
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "5.3.0"
+
+  role_name             = "${local.labels.id}-velero"
+  attach_velero_policy  = true
+  velero_s3_bucket_arns = data.aws_s3_bucket.velero.*.arn
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.cluster.oidc_provider_arn
+      namespace_service_accounts = local.config_velero.service_accounts.velero
+    }
+  }
+}
+
+data "aws_iam_policy_document" "velero_kms" {
+  count = length(module.velero_irsa) > 0 && local.use_kms ? 1 : 0
+
+  statement {
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey",
+    ]
+    resources = [
+      one(data.aws_kms_key.velero_kms.*.arn)
+    ]
+  }
+
+  statement {
+    actions = [
+      "kms:CreateGrant",
+      "kms:ListGrants",
+      "kms:RevokeGrant",
+    ]
+    resources = [
+      one(data.aws_kms_key.velero_kms.*.arn)
+    ]
+    condition {
+      test     = "Bool"
+      variable = "kms:GrantIsForAWSResource"
+      values   = [true]
+    }
+  }
+}
+
+resource "aws_iam_policy" "velero_irsa_kms" {
+  count = length(module.velero_irsa) > 0 && local.use_kms ? 1 : 0
+
+  name   = "${local.labels.id}-velero-irsa-kms"
+  policy = one(data.aws_iam_policy_document.velero_kms.*.json)
+}
+
+resource "aws_iam_role_policy_attachment" "velero_irsa_kms" {
+  count = length(module.velero_irsa) > 0 && local.use_kms ? 1 : 0
+
+  role       = one(module.velero_irsa.*.iam_role_name)
+  policy_arn = one(aws_iam_policy.velero_irsa_kms.*.arn)
+}
