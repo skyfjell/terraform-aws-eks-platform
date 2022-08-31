@@ -29,7 +29,7 @@ data "aws_s3_bucket" "velero" {
   bucket = local.config_velero.existing_id == null ? one(module.velero_bucket.*.s3.id) : local.config_velero.existing_id
 }
 
-data "aws_kms_key" "kms" {
+data "aws_kms_key" "velero_kms" {
   count  = local.use_kms ? 1 : 0
   key_id = local.config_velero.enable && local.config_velero.existing_id == null ? one(module.velero_bucket.*.kms_arn) : try(coalesce(local.kms_alias), coalesce(local.kms_id), "")
 }
