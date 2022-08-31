@@ -45,13 +45,6 @@ module "example-complete" {
     view = [aws_iam_user.test_view.arn]
   }
 
-  config_velero = {
-    install = true
-    config_bucket = {
-      enable = true,
-    }
-  }
-
 }
 
 locals {
