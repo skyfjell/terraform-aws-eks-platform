@@ -110,29 +110,49 @@ variable "config_velero" {
   EOT
 
   type = object({
-    install = optional(bool)
-    version = optional(string)
-    config_bucket = optional(object({
-      existing_id = optional(string)
-      enable      = optional(bool)
-      server_side_encryption_configuration = optional(object({
-        type              = optional(string)
-        kms_master_key_id = optional(string)
-        alias             = optional(string)
-      }))
+    existing_id = optional(string)
+    enable      = optional(bool)
+    server_side_encryption_configuration = optional(object({
+      type              = optional(string)
+      kms_master_key_id = optional(string)
+      alias             = optional(string)
     }))
-    service_accounts = optional(list(string))
+
+    service_accounts = optional(object({
+      velero = optional(list(string))
+    }))
   })
 
   default = {
-    install = true
-    version = "2.30.1"
-    config_bucket = {
-      enable = true
-      server_side_encryption_configuration = {
-        type = "aws:kms"
-      }
+    enable = true
+    server_side_encryption_configuration = {
+      type = "aws:kms"
     }
+    service_accounts = {
+      velero = ["velero:velero"]
+    }
+  }
+
+  validation {
+    condition = anytrue([
+      // If enabled, with existing bucket and kms is used. The alias or kms id needs to be passed in
+      alltrue([
+        var.config_velero.enable,
+        var.config_velero.existing_id != null,
+        try(var.config_velero.server_side_encryption_configuration.type, "aws:kms") != "AES256",
+        (
+          try(var.config_velero.server_side_encryption_configuration.kms_master_key_id, null) != null
+          || try(var.config_velero.server_side_encryption_configuration.alias, null) != null
+        )
+      ]),
+      // If enabled but not kms, ok
+      var.config_velero.enable && try(var.config_velero.server_side_encryption_configuration.type, "aws:kms") == "AES256",
+      // If enabled and exisiting bucket is null, default kms takes over
+      var.config_velero.enable && var.config_velero.existing_id == null,
+      // If not enabled
+      !var.config_velero.enable
+    ])
+    error_message = "Existing bucket with aws:kms encryption needs a kms key or alias passed in."
   }
 }
 

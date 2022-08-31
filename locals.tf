@@ -24,8 +24,8 @@ locals {
 
   config_dns = merge(var.config_dns, {
     service_accounts = {
-      external_dns = try(var.config_dns.irsa.external-dns, ["external-dns:external-dns"])
-      cert_manager = try(var.config_dns.irsa.external-dns, ["cert-manager:cert-manager"])
+      external_dns = try(var.config_dns.service_accounts.external-dns, ["external-dns:external-dns"])
+      cert_manager = try(var.config_dns.service_accounts.cert_manager, ["cert-manager:cert-manager"])
   } })
 
   # Services and Applications
@@ -41,14 +41,15 @@ locals {
   hosted_zone_arns = [for x in local.config_dns.hosted_zone_ids : "arn:aws:route53:::hostedzone/${x}"]
 
 
-  config_velero = defaults(var.config_velero, {
-    install = true
-    version = "2.30.1"
-    config_bucket = {
-      enable = true
-      server_side_encryption_configuration = {
-        type = "aws:kms"
-      }
+  config_velero = merge(var.config_velero, {
+    enable = try(var.config_velero.enable, true)
+    server_side_encryption_configuration = merge(var.config_velero.server_side_encryption_configuration, {
+      type              = try(var.config_velero.server_side_encryption_configuration.type, "aws:kms")
+      alias             = try(var.config_velero.server_side_encryption_configuration.alias, "alias/${local.labels.id}-velero")
+      kms_master_key_id = try(var.config_velero.server_side_encryption_configuration.kms_master_key_id)
+    })
+    service_accounts = {
+      velero = try(var.config_velero.service_accounts.velero, ["velero:velero"])
     }
     }
   )

@@ -31,9 +31,11 @@ output "cluster" {
   }
 }
 
-output "velero_storage" {
-  value       = try(module.velero.s3)
-  description = "S3 object with `id` and `arn` for velero storage bucket. If velero isn't used, will be null"
+output "velero" {
+  value = {
+    s3 = try(one(module.velero_bucket.*.s3))
+  }
+  description = "Outputs from configuring velero"
 }
 
 output "cluster_roles" {

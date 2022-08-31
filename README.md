@@ -51,7 +51,8 @@ If the cluster has been destroyed, but the run errored out and needed to be re-a
 | <a name="module_karpenter_irsa"></a> [karpenter\_irsa](#module\_karpenter\_irsa) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.3.0 |
 | <a name="module_platform_edit_iam"></a> [platform\_edit\_iam](#module\_platform\_edit\_iam) | ./modules/cluster-iam | n/a |
 | <a name="module_platform_view_iam"></a> [platform\_view\_iam](#module\_platform\_view\_iam) | ./modules/cluster-iam | n/a |
-| <a name="module_velero"></a> [velero](#module\_velero) | ./modules/cluster-backups | n/a |
+| <a name="module_velero_bucket"></a> [velero\_bucket](#module\_velero\_bucket) | skyfjell/s3/aws | 1.0.5 |
+| <a name="module_velero_iam"></a> [velero\_iam](#module\_velero\_iam) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.3.0 |
 
 ## Resources
 
@@ -74,8 +75,10 @@ If the cluster has been destroyed, but the run errored out and needed to be re-a
 | [aws_iam_policy_document.autoscaler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.autoscaler_assume](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.eks_assume_role_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_kms_key.kms](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/kms_key) | data source |
 | [aws_partition.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/partition) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
+| [aws_s3_bucket.velero](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/s3_bucket) | data source |
 
 ## Inputs
 
@@ -86,7 +89,7 @@ If the cluster has been destroyed, but the run errored out and needed to be re-a
 | <a name="input_config_dns"></a> [config\_dns](#input\_config\_dns) | Configuration of DNS. Support for a list of existing domain zones and<br>  IRSA support for related DNS services. | <pre>object({<br>    hosted_zone_ids = list(string)<br>    service_accounts = optional(object({<br>      external_dns = optional(list(string))<br>      cert_manager = optional(list(string))<br>    }))<br>  })</pre> | <pre>{<br>  "hosted_zone_ids": [],<br>  "service_accounts": {<br>    "cert_manager": [<br>      "cert-manager:cert-manager"<br>    ],<br>    "external_dns": [<br>      "external-dns:external-dns"<br>    ]<br>  }<br>}</pre> | no |
 | <a name="input_config_flux"></a> [config\_flux](#input\_config\_flux) | Flux Configuration | <pre>object({<br>    install = optional(bool)<br>    git = object({<br>      name            = string,<br>      url             = string,<br>      path            = string,<br>      known_hosts     = list(string)<br>      create_ssh_key  = optional(bool)<br>      existing_secret = optional(string)<br>      random_suffix   = optional(bool)<br>      ref = object({<br>        branch = optional(string)<br>        commit = optional(string)<br>        tag    = optional(string)<br>        semver = optional(string)<br>      }),<br>    })<br>  })</pre> | n/a | yes |
 | <a name="input_config_karpenter"></a> [config\_karpenter](#input\_config\_karpenter) | Karpenter Configuration | <pre>object({<br>    install = bool<br>  })</pre> | <pre>{<br>  "install": true<br>}</pre> | no |
-| <a name="input_config_velero"></a> [config\_velero](#input\_config\_velero) | Configures velero and the velero bucket. An external velero bucket that <br>    is managed externally from this module can be passed in via <br>    `config_bucket = {existing_id = "123"}`. If `config_bucket = {enable = true}` <br>    even with `install = false` the bucket will remain created. | <pre>object({<br>    install = optional(bool)<br>    version = optional(string)<br>    config_bucket = optional(object({<br>      existing_id = optional(string)<br>      enable      = optional(bool)<br>      server_side_encryption_configuration = optional(object({<br>        type              = optional(string)<br>        kms_master_key_id = optional(string)<br>        alias             = optional(string)<br>      }))<br>    }))<br>    service_accounts = optional(list(string))<br>  })</pre> | <pre>{<br>  "config_bucket": {<br>    "enable": true,<br>    "server_side_encryption_configuration": {<br>      "type": "aws:kms"<br>    }<br>  },<br>  "install": true,<br>  "version": "2.30.1"<br>}</pre> | no |
+| <a name="input_config_velero"></a> [config\_velero](#input\_config\_velero) | Configures velero and the velero bucket. An external velero bucket that <br>    is managed externally from this module can be passed in via <br>    `config_bucket = {existing_id = "123"}`. If `config_bucket = {enable = true}` <br>    even with `install = false` the bucket will remain created. | <pre>object({<br>    existing_id = optional(string)<br>    enable      = optional(bool)<br>    server_side_encryption_configuration = optional(object({<br>      type              = optional(string)<br>      kms_master_key_id = optional(string)<br>      alias             = optional(string)<br>    }))<br><br>    service_accounts = optional(object({<br>      velero = optional(list(string))<br>    }))<br>  })</pre> | <pre>{<br>  "enable": true,<br>  "server_side_encryption_configuration": {<br>    "type": "aws:kms"<br>  },<br>  "service_accounts": {<br>    "velero": [<br>      "velero:velero"<br>    ]<br>  }<br>}</pre> | no |
 | <a name="input_labels"></a> [labels](#input\_labels) | Instance of labels module | <pre>object(<br>    {<br>      id   = string<br>      tags = any<br>    }<br>  )</pre> | n/a | yes |
 | <a name="input_managed_node_groups"></a> [managed\_node\_groups](#input\_managed\_node\_groups) | EKS Managed Node Groups | `map(object({}))` | `{}` | no |
 | <a name="input_users"></a> [users](#input\_users) | Map of lists of user ARNs | <pre>object({<br>    edit = optional(list(string)),<br>    view = optional(list(string)),<br>  })</pre> | n/a | yes |
@@ -99,6 +102,6 @@ If the cluster has been destroyed, but the run errored out and needed to be re-a
 | <a name="output_cluster"></a> [cluster](#output\_cluster) | Ouput from terraform-aws-eks cluster module |
 | <a name="output_cluster_roles"></a> [cluster\_roles](#output\_cluster\_roles) | n/a |
 | <a name="output_flux"></a> [flux](#output\_flux) | Object with flux information. |
-| <a name="output_velero_storage"></a> [velero\_storage](#output\_velero\_storage) | S3 object with `id` and `arn` for velero storage bucket. If velero isn't used, will be null |
+| <a name="output_velero"></a> [velero](#output\_velero) | Outputs from configuring velero |
 <!-- END_TF_DOCS -->
 <!-- prettier-ignore-end -->
