@@ -42,10 +42,10 @@ locals {
 
 
   config_velero = merge(var.config_velero, {
-    enable = try(var.config_velero.enable,true)
+    enable = try(var.config_velero.enable, true)
     server_side_encryption_configuration = merge(var.config_velero.server_side_encryption_configuration, {
-      type  = try(var.config_velero.server_side_encryption_configuration.type, "aws:kms")
-      alias = try(var.config_velero.server_side_encryption_configuration.alias, "alias/${local.labels.id}-velero")
+      type              = try(var.config_velero.server_side_encryption_configuration.type, "aws:kms")
+      alias             = try(var.config_velero.server_side_encryption_configuration.alias, "alias/${local.labels.id}-velero")
       kms_master_key_id = try(var.config_velero.server_side_encryption_configuration.kms_master_key_id)
     })
     service_accounts = {
