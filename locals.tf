@@ -31,18 +31,13 @@ locals {
   # Services and Applications
   config_autoscaler = var.config_autoscaler
 
-  config_flux = merge(
-    {
-      install = local.cluster.install,
-    },
+  config_flux = defaults(
     var.config_flux,
     {
-      git = merge(
-        {
-          create_ssh_key = true,
-        },
-        var.config_flux.git
-      )
+      install = local.cluster.install,
+      git = {
+        create_ssh_key = true,
+      }
     }
   )
 
