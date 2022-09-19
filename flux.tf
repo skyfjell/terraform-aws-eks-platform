@@ -7,7 +7,7 @@ module "flux_install" {
   count = local.install_flux ? 1 : 0
 
   source  = "skyfjell/install/flux"
-  version = "1.0.2"
+  version = "1.0.3"
 
   name = local.labels.id
 
