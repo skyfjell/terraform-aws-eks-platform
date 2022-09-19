@@ -31,12 +31,20 @@ locals {
   # Services and Applications
   config_autoscaler = var.config_autoscaler
 
-  config_flux = defaults(var.config_flux, {
-    install = local.cluster.install,
-    git = {
-      create_ssh_key = true,
+  config_flux = merge(
+    {
+      install = local.cluster.install,
+    },
+    var.config_flux,
+    {
+      git = merge(
+        {
+          create_ssh_key = true,
+        },
+        var.config_flux.git
+      )
     }
-  })
+  )
 
   hosted_zone_arns = [for x in local.config_dns.hosted_zone_ids : "arn:aws:route53:::hostedzone/${x}"]
 
