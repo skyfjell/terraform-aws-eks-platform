@@ -7,37 +7,11 @@ locals {
     "app.kubernetes.io/component"           = "aws-access"
   }
 
-  rbac_manifests_map = {
+  rbac_tf = {
+    enable_karpenter = local.cluster.install && local.config_karpenter.install
+    enable_flux      = local.cluster.install && local.config_flux.install
 
     cluster_roles = {
-      karpenter_edit = {
-        apiVersion = "rbac.authorization.k8s.io/v1"
-        kind       = "ClusterRole"
-
-        metadata = {
-          name   = "karpenter-edit"
-          labels = merge(local.rbac_labels, { "rbac.authorization.k8s.io/aggregate-to-platform-edit" = "true" })
-        }
-        rules = [{
-          apiGroups = ["karpenter.sh"]
-          resources = ["*"]
-          verbs     = ["create", "delete", "deletecollection", "patch", "update"]
-        }]
-      },
-      karpenter_view = {
-        apiVersion = "rbac.authorization.k8s.io/v1"
-        kind       = "ClusterRole"
-
-        metadata = {
-          name   = "karpenter-view"
-          labels = merge(local.rbac_labels, { "rbac.authorization.k8s.io/aggregate-to-platform-view" = "true" })
-        }
-        rules = [{
-          apiGroups = ["karpenter.sh"]
-          resources = ["*"]
-          verbs     = ["get", "list", "watch"]
-        }]
-      },
       platform_view = {
         apiVersion = "rbac.authorization.k8s.io/v1"
         kind       = "ClusterRole"
@@ -57,7 +31,13 @@ locals {
           }
           labels = merge(local.rbac_labels, { "rbac.authorization.k8s.io/aggregate-to-platform-edit" = "true" })
         }
-        rules = []
+        rules = [
+          {
+            apiGroups = ["apiextensions.k8s.io"]
+            resources = ["customresourcedefinitions"]
+            verbs     = ["get", "list", "watch"]
+          }
+        ]
       }
 
       platform_edit_aggregate = {
@@ -144,19 +124,83 @@ locals {
       },
     }
 
+    karpenter_cluster_roles = {
+      view = {
+        apiVersion = "rbac.authorization.k8s.io/v1"
+        kind       = "ClusterRole"
+
+        metadata = {
+          name   = "karpenter-view"
+          labels = merge(local.rbac_labels, { "rbac.authorization.k8s.io/aggregate-to-platform-view" = "true" })
+        }
+        rules = [{
+          apiGroups = ["karpenter.sh"]
+          resources = ["*"]
+          verbs     = ["get", "list", "watch"]
+        }]
+      },
+      edit = {
+        apiVersion = "rbac.authorization.k8s.io/v1"
+        kind       = "ClusterRole"
+
+        metadata = {
+          name   = "karpenter-edit"
+          labels = merge(local.rbac_labels, { "rbac.authorization.k8s.io/aggregate-to-platform-edit" = "true" })
+        }
+        rules = [{
+          apiGroups = ["karpenter.sh"]
+          resources = ["*"]
+          verbs     = ["create", "delete", "deletecollection", "patch", "update"]
+        }]
+      },
+    },
+
+    flux_cluster_roles = {
+      view = {
+        apiVersion = "rbac.authorization.k8s.io/v1"
+        kind       = "ClusterRole"
+
+        metadata = {
+          name   = "flux-view"
+          labels = merge(local.rbac_labels, { "rbac.authorization.k8s.io/aggregate-to-platform-view" = "true" })
+        }
+        rules = [{
+          apiGroups = ["toolkit.fluxcd.io"]
+          resources = ["*"]
+          verbs     = ["get", "list", "watch"]
+        }]
+      },
+      edit = {
+        apiVersion = "rbac.authorization.k8s.io/v1"
+        kind       = "ClusterRole"
+
+        metadata = {
+          name   = "flux-edit"
+          labels = merge(local.rbac_labels, { "rbac.authorization.k8s.io/aggregate-to-platform-edit" = "true" })
+        }
+        rules = [{
+          apiGroups = ["toolkit.fluxcd.io"]
+          resources = ["*"]
+          verbs     = ["create", "delete", "deletecollection", "patch", "update"]
+        }]
+      },
+
+    }
   }
 }
 
 locals {
   rbac_manifests = concat(
-    values(local.rbac_manifests_map.cluster_roles),
-    values(local.rbac_manifests_map.cluster_role_bindings)
+    values(local.rbac_tf.cluster_roles),
+    values(local.rbac_tf.cluster_role_bindings),
+    local.rbac_tf.enable_flux ? values(local.rbac_tf.flux_cluster_roles) : [],
+    local.rbac_tf.enable_karpenter ? values(local.rbac_tf.karpenter_cluster_roles) : [],
   )
 }
 
 # TODO: Refactor to use proper kubernetes_[resource] resources.
 resource "helm_release" "rbac" {
-  count      = local.cluster.install && local.config_karpenter.install ? 1 : 0
+  count      = local.cluster.install ? 1 : 0
   name       = "rbac"
   repository = "https://skyfjell.github.io/charts"
   chart      = "null"
