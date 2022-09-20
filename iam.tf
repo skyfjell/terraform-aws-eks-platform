@@ -26,6 +26,8 @@ module "platform_edit_iam" {
 
 
 module "ebs_csi_irsa_role" {
+  count = local.cluster.install ? 1 : 0
+
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.4.0"
 
