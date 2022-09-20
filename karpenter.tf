@@ -9,7 +9,7 @@ module "karpenter_irsa" {
   count = local.cluster.install && local.config_karpenter.install ? 1 : 0
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.3.0"
+  version = "5.4.0"
 
   role_name                          = "karpenter-controller-${local.labels.id}"
   attach_karpenter_controller_policy = true
@@ -40,7 +40,7 @@ resource "helm_release" "karpenter" {
   name       = "karpenter"
   repository = "https://charts.karpenter.sh"
   chart      = "karpenter"
-  version    = "v0.15.0"
+  version    = "0.16.1"
 
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"

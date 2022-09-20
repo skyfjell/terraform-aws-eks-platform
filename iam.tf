@@ -27,7 +27,7 @@ module "platform_edit_iam" {
 
 module "ebs_csi_irsa_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.3.0"
+  version = "5.4.0"
 
   role_name = "${local.labels.id}-ebs-csi"
 
@@ -44,7 +44,7 @@ module "ebs_csi_irsa_role" {
 module "cert_manager_irsa" {
   count   = length(local.hosted_zone_arns) > 0 && length(local.config_dns.service_accounts.cert_manager) > 0 ? 1 : 0
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.3.0"
+  version = "5.4.0"
 
   role_name                     = "${local.labels.id}-cert-manager"
   attach_cert_manager_policy    = true
@@ -62,7 +62,7 @@ module "external_dns_irsa" {
   count = length(local.hosted_zone_arns) > 0 && length(local.config_dns.service_accounts.external_dns) > 0 ? 1 : 0
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.3.0"
+  version = "5.4.0"
 
   role_name                     = "${local.labels.id}-external-dns"
   attach_external_dns_policy    = true
@@ -79,7 +79,7 @@ module "external_dns_irsa" {
 module "velero_irsa" {
   count   = local.config_velero.enable && length(local.config_velero.service_accounts.velero) > 0 ? 1 : 0
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.3.0"
+  version = "5.4.0"
 
   role_name             = "${local.labels.id}-velero"
   attach_velero_policy  = true
