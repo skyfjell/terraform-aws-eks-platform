@@ -42,10 +42,10 @@ module "cluster" {
     }
   } : {}
 
-  cluster_addons = local.cluster.version > "1.22" ? {
+  cluster_addons = local.cluster.version > "1.22" && local.cluster.install ? {
     "aws-ebs-csi-driver" = {
       resolve_conflicts        = "OVERWRITE"
-      service_account_role_arn = module.ebs_csi_irsa_role.iam_role_arn
+      service_account_role_arn = one(module.ebs_csi_irsa_role.*.iam_role_arn)
     }
   } : {}
 
