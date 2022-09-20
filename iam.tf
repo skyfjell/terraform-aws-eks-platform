@@ -1,5 +1,5 @@
 module "platform_view_iam" {
-  count = length(local.users.view) > 0 ? 1 : 0
+  count = length(local.users.view) > 0 && local.cluster.install ? 1 : 0
 
   source = "./modules/cluster-iam"
 
@@ -12,7 +12,7 @@ module "platform_view_iam" {
 }
 
 module "platform_edit_iam" {
-  count = length(local.users.edit) > 0 ? 1 : 0
+  count = length(local.users.edit) > 0 && local.cluster.install ? 1 : 0
 
   source = "./modules/cluster-iam"
 
@@ -44,7 +44,12 @@ module "ebs_csi_irsa_role" {
 }
 
 module "cert_manager_irsa" {
-  count   = length(local.hosted_zone_arns) > 0 && length(local.config_dns.service_accounts.cert_manager) > 0 ? 1 : 0
+  count = alltrue([
+    local.cluster.install,
+    length(local.hosted_zone_arns) > 0,
+    length(local.config_dns.service_accounts.cert_manager) > 0
+  ]) ? 1 : 0
+
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.4.0"
 
@@ -61,7 +66,11 @@ module "cert_manager_irsa" {
 }
 
 module "external_dns_irsa" {
-  count = length(local.hosted_zone_arns) > 0 && length(local.config_dns.service_accounts.external_dns) > 0 ? 1 : 0
+  count = alltrue([
+    length(local.hosted_zone_arns) > 0,
+    length(local.config_dns.service_accounts.external_dns) > 0,
+    local.cluster.install
+  ]) ? 1 : 0
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.4.0"
@@ -79,7 +88,12 @@ module "external_dns_irsa" {
 }
 
 module "velero_irsa" {
-  count   = local.config_velero.enable && length(local.config_velero.service_accounts.velero) > 0 ? 1 : 0
+  count = alltrue([
+    local.config_velero.enable,
+    length(local.config_velero.service_accounts.velero) > 0,
+    local.cluster.install
+  ]) ? 1 : 0
+
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.4.0"
 
