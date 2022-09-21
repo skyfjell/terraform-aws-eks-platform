@@ -21,8 +21,8 @@ variable "cluster" {
   description = "Cluster Configuration"
 
   type = object({
-    install = optional(bool)
-    destroy = optional(bool)
+    install = optional(bool, true)
+    destroy = optional(bool, false)
     version = string
     aws_auth_roles = optional(list(object({
       username = string,
@@ -63,8 +63,6 @@ variable "config_dns" {
   }
 }
 
-
-
 variable "config_autoscaler" {
   description = "Cluster Autoscaler Configuration"
   type = object({
@@ -82,13 +80,13 @@ variable "config_flux" {
   description = "Flux Configuration"
 
   type = object({
-    install = optional(bool)
+    install = optional(bool, true)
     git = object({
       name            = string,
       url             = string,
       path            = string,
       known_hosts     = list(string)
-      create_ssh_key  = optional(bool)
+      create_ssh_key  = optional(bool, true)
       existing_secret = optional(string)
       random_suffix   = optional(bool)
       ref = object({
@@ -160,10 +158,8 @@ variable "config_karpenter" {
   description = "Karpenter Configuration"
 
   type = object({
-    install = bool
+    install = optional(bool, true)
   })
 
-  default = {
-    install = true
-  }
+  default = {}
 }

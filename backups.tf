@@ -14,7 +14,7 @@ module "velero_bucket" {
   count = local.create_bucket ? 1 : 0
 
   source  = "skyfjell/s3/aws"
-  version = "1.0.5"
+  version = "1.0.6"
 
   use_prefix                           = false
   name                                 = "${local.labels.id}-velero"

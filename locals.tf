@@ -9,10 +9,7 @@ locals {
   }
 
   # Cluster Config
-  cluster = defaults(var.cluster, {
-    install = true,
-    destroy = false
-  })
+  cluster = var.cluster
 
   managed_node_groups = var.managed_node_groups
   cluster_id          = module.cluster.cluster_id
@@ -31,15 +28,7 @@ locals {
   # Services and Applications
   config_autoscaler = var.config_autoscaler
 
-  config_flux = defaults(
-    var.config_flux,
-    {
-      install = local.cluster.install,
-      git = {
-        create_ssh_key = true,
-      }
-    }
-  )
+  config_flux = var.config_flux
 
   hosted_zone_arns = [for x in local.config_dns.hosted_zone_ids : "arn:aws:route53:::hostedzone/${x}"]
 
@@ -57,9 +46,7 @@ locals {
     }
   )
 
-  config_karpenter = defaults(var.config_karpenter, {
-    install = local.cluster.install,
-  })
+  config_karpenter = var.config_karpenter
 
   partition = data.aws_partition.current.partition
 }
