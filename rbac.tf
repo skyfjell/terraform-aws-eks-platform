@@ -22,6 +22,11 @@ locals {
                 "rbac.authorization.k8s.io/aggregate-to-view" = "true"
               }
             },
+            {
+              matchLabels = {
+                "rbac.skyfjell.io/aggregate-to-platform-view" = "true"
+              }
+            }
           ]
         }
         metadata = {
@@ -29,7 +34,19 @@ locals {
           annotations = {
             "rbac.authorization.kubernetes.io/autoupdate" = "true"
           }
-          labels = merge(local.rbac_labels, { "rbac.authorization.k8s.io/aggregate-to-platform-edit" = "true" })
+          labels = merge(local.rbac_labels, { "rbac.skyfjell.io/aggregate-to-platform-edit" = "true" })
+        }
+        rules = []
+      }
+      platform_view_aggregate = {
+        apiVersion = "rbac.authorization.k8s.io/v1"
+        kind       = "ClusterRole"
+        metadata = {
+          name = "platform-view-aggregate"
+          annotations = {
+            "rbac.authorization.kubernetes.io/autoupdate" = "true"
+          }
+          labels = merge(local.rbac_labels, { "rbac.skyfjell.io/aggregate-to-platform-view" = "true" })
         }
         rules = [
           {
@@ -38,22 +55,8 @@ locals {
             verbs     = ["get", "list", "watch"]
           }
         ]
-      }
+      },
 
-      platform_edit_aggregate = {
-        apiVersion = "rbac.authorization.k8s.io/v1"
-        kind       = "ClusterRole"
-
-        metadata = {
-          name   = "platform-edit-aggregate"
-          labels = merge(local.rbac_labels, { "rbac.authorization.k8s.io/aggregate-to-platform-edit" = "true" })
-        }
-        rules = [{
-          apiGroups = [""]
-          resources = ["nodes"]
-          verbs     = ["get", "list", "watch"]
-        }]
-      }
       platform_edit = {
         apiVersion = "rbac.authorization.k8s.io/v1"
         kind       = "ClusterRole"
@@ -66,7 +69,7 @@ locals {
             },
             {
               matchLabels = {
-                "rbac.authorization.k8s.io/aggregate-to-platform-edit" = "true"
+                "rbac.skyfjell.io/aggregate-to-platform-edit" = "true"
               }
             }
           ]
@@ -81,9 +84,23 @@ locals {
         rules = []
       }
     },
+    platform_edit_aggregate = {
+      apiVersion = "rbac.authorization.k8s.io/v1"
+      kind       = "ClusterRole"
+
+      metadata = {
+        name   = "platform-edit-aggregate"
+        labels = merge(local.rbac_labels, { "rbac.skyfjell.io/aggregate-to-platform-edit" = "true" })
+      }
+      rules = [{
+        apiGroups = [""]
+        resources = ["nodes"]
+        verbs     = ["get", "list", "watch"]
+      }]
+    },
 
     cluster_role_bindings = {
-      cluster-role-binding-platform-view = {
+      platform-view = {
         apiVersion = "rbac.authorization.k8s.io/v1"
         kind       = "ClusterRoleBinding"
         metadata = {
@@ -103,7 +120,7 @@ locals {
         ]
       },
 
-      cluster-role-binding-platform-edit = {
+      platform-edit = {
         apiVersion = "rbac.authorization.k8s.io/v1"
         kind       = "ClusterRoleBinding"
         metadata = {
@@ -131,11 +148,11 @@ locals {
 
         metadata = {
           name   = "karpenter-view"
-          labels = merge(local.rbac_labels, { "rbac.authorization.k8s.io/aggregate-to-platform-view" = "true" })
+          labels = merge(local.rbac_labels, { "rbac.skyfjell.io/aggregate-to-platform-view" = "true" })
         }
         rules = [{
           apiGroups = ["karpenter.sh"]
-          resources = ["*"]
+          resources = ["provisioners", "provisioners/status"]
           verbs     = ["get", "list", "watch"]
         }]
       },
@@ -145,11 +162,11 @@ locals {
 
         metadata = {
           name   = "karpenter-edit"
-          labels = merge(local.rbac_labels, { "rbac.authorization.k8s.io/aggregate-to-platform-edit" = "true" })
+          labels = merge(local.rbac_labels, { "rbac.skyfjell.io/aggregate-to-platform-edit" = "true" })
         }
         rules = [{
           apiGroups = ["karpenter.sh"]
-          resources = ["*"]
+          resources = ["provisioners", "provisioners/status"]
           verbs     = ["create", "delete", "deletecollection", "patch", "update"]
         }]
       },
@@ -162,7 +179,7 @@ locals {
 
         metadata = {
           name   = "flux-view"
-          labels = merge(local.rbac_labels, { "rbac.authorization.k8s.io/aggregate-to-platform-view" = "true" })
+          labels = merge(local.rbac_labels, { "rbac.skyfjell.io/aggregate-to-platform-view" = "true" })
         }
         rules = [{
           apiGroups = ["toolkit.fluxcd.io"]
@@ -176,7 +193,7 @@ locals {
 
         metadata = {
           name   = "flux-edit"
-          labels = merge(local.rbac_labels, { "rbac.authorization.k8s.io/aggregate-to-platform-edit" = "true" })
+          labels = merge(local.rbac_labels, { "rbac.skyfjell.io/aggregate-to-platform-edit" = "true" })
         }
         rules = [{
           apiGroups = ["toolkit.fluxcd.io"]
