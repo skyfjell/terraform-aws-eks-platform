@@ -28,7 +28,7 @@ variable "cluster" {
       username = string,
       rolearn  = string,
       groups   = list(string),
-    })))
+    })), [])
     subnet_ids = list(string)
     vpc_id     = string
   })

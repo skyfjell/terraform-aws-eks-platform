@@ -16,9 +16,11 @@ module "velero_bucket" {
   source  = "skyfjell/s3/aws"
   version = "1.0.6"
 
-  use_prefix                           = false
-  name                                 = "${local.labels.id}-velero"
-  logging                              = null
+  use_prefix = false
+  name       = "${local.labels.id}-velero"
+  config_logging = {
+    enable = false
+  }
   server_side_encryption_configuration = local.server_side_encryption_configuration
   labels                               = local.labels
 }
@@ -26,7 +28,7 @@ module "velero_bucket" {
 
 data "aws_s3_bucket" "velero" {
   count  = local.config_velero.enable ? 1 : 0
-  bucket = local.config_velero.existing_id == null ? one(module.velero_bucket.*.s3.id) : local.config_velero.existing_id
+  bucket = local.config_velero.existing_id == null ? one(module.velero_bucket.*.bucket.id) : local.config_velero.existing_id
 }
 
 data "aws_kms_key" "velero_kms" {

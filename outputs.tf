@@ -33,7 +33,7 @@ output "cluster" {
 
 output "velero" {
   value = {
-    s3 = try(one(module.velero_bucket.*.s3))
+    bucket = try(one(module.velero_bucket.*.bucket))
   }
   description = "Outputs from configuring velero"
 }
