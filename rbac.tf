@@ -182,9 +182,15 @@ locals {
           labels = merge(local.rbac_labels, { "rbac.skyfjell.io/aggregate-to-platform-view" = "true" })
         }
         rules = [{
-          apiGroups = ["toolkit.fluxcd.io"]
-          resources = ["*"]
-          verbs     = ["get", "list", "watch"]
+          apiGroups = [
+            "helm.toolkit.fluxcd.io",
+            "image.toolkit.fluxcd.io",
+            "kustomize.toolkit.fluxcd.io",
+            "notification.toolkit.fluxcd.io",
+            "source.toolkit.fluxcd.io",
+          ],
+          resources = ["*"],
+          verbs     = ["get", "list", "watch"],
         }]
       },
       edit = {
@@ -196,9 +202,15 @@ locals {
           labels = merge(local.rbac_labels, { "rbac.skyfjell.io/aggregate-to-platform-edit" = "true" })
         }
         rules = [{
-          apiGroups = ["toolkit.fluxcd.io"]
-          resources = ["*"]
-          verbs     = ["create", "delete", "deletecollection", "patch", "update"]
+          apiGroups = [
+            "helm.toolkit.fluxcd.io",
+            "image.toolkit.fluxcd.io",
+            "kustomize.toolkit.fluxcd.io",
+            "notification.toolkit.fluxcd.io",
+            "source.toolkit.fluxcd.io",
+          ],
+          resources = ["*"],
+          verbs     = ["create", "delete", "deletecollection", "patch", "update"],
         }]
       },
 
