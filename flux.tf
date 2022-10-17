@@ -51,5 +51,5 @@ module "flux_kustomization" {
     name = module.flux_git_repository[0].name
   }
 
-  depends_on = [module.flux_install]
+  depends_on = [module.flux_git_repository]
 }
