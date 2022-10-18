@@ -75,16 +75,16 @@ locals {
   cmd = local.cluster.install && local.config_karpenter.install ? { "${local.wait_command}" : null } : {}
 }
 
-resource "null_resource" "wait_for_scaledown" {
-  for_each = local.cmd
+# resource "null_resource" "wait_for_scaledown" {
+#   for_each = local.cmd
 
-  provisioner "local-exec" {
-    when        = destroy
-    interpreter = ["bash", "-c"]
-    command     = each.key
-  }
+#   provisioner "local-exec" {
+#     when        = destroy
+#     interpreter = ["bash", "-c"]
+#     command     = each.key
+#   }
 
-  depends_on = [
-    helm_release.karpenter_provisioners
-  ]
-}
+#   depends_on = [
+#     helm_release.karpenter_provisioners
+#   ]
+# }
