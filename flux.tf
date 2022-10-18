@@ -32,7 +32,6 @@ module "flux_git_repository" {
   name            = local.config_flux.git.name
   create_ssh_key  = local.config_flux.git.create_ssh_key
   existing_secret = local.config_flux.git.existing_secret
-  random_suffix   = false
 
   depends_on = [module.flux_install]
 }
@@ -43,13 +42,8 @@ module "flux_kustomization" {
   source  = "skyfjell/kustomization/flux"
   version = "1.0.3"
 
-
   name = local.config_flux.git.name
   path = local.config_flux.git.path
-
-  source_ref = {
-    name = one(module.flux_git_repository.*.name)
-  }
 
   depends_on = [module.flux_git_repository]
 }
