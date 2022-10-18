@@ -40,7 +40,7 @@ module "flux_kustomization" {
   count = local.install_flux ? 1 : 0
 
   source  = "skyfjell/kustomization/flux"
-  version = "1.0.3"
+  version = "1.0.4"
 
   name = local.config_flux.git.name
   path = local.config_flux.git.path
