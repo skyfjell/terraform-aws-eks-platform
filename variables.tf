@@ -82,12 +82,13 @@ variable "config_flux" {
   type = object({
     install = optional(bool, true)
     git = object({
-      name            = optional(string, "platform-system-init"),
+      name            = string,
       url             = string,
       path            = string,
       known_hosts     = list(string)
       create_ssh_key  = optional(bool, true)
       existing_secret = optional(string)
+      random_suffix   = optional(bool)
       ref = object({
         branch = optional(string)
         commit = optional(string)

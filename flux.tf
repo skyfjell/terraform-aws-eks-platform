@@ -23,7 +23,7 @@ module "flux_git_repository" {
   count = local.install_flux ? 1 : 0
 
   source  = "skyfjell/git-repository/flux"
-  version = "1.0.3"
+  version = "1.0.2"
 
   url             = local.config_flux.git.url
   interval        = "1m"
@@ -32,6 +32,7 @@ module "flux_git_repository" {
   name            = local.config_flux.git.name
   create_ssh_key  = local.config_flux.git.create_ssh_key
   existing_secret = local.config_flux.git.existing_secret
+  random_suffix   = try(coalesce(local.config_flux.git.random_suffix), true)
 
   depends_on = [module.flux_install]
 }
@@ -40,10 +41,15 @@ module "flux_kustomization" {
   count = local.install_flux ? 1 : 0
 
   source  = "skyfjell/kustomization/flux"
-  version = "1.0.3"
+  version = "1.0.2"
+
 
   name = local.config_flux.git.name
   path = local.config_flux.git.path
 
-  depends_on = [module.flux_git_repository]
+  source_ref = {
+    name = module.flux_git_repository[0].name
+  }
+
+  depends_on = [module.flux_install]
 }
