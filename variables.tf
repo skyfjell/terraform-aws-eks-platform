@@ -29,8 +29,9 @@ variable "cluster" {
       rolearn  = string,
       groups   = list(string),
     })), [])
-    subnet_ids = list(string)
-    vpc_id     = string
+    subnet_ids  = list(string)
+    vpc_id      = string
+    enable_rbac = optional(bool, true)
   })
 }
 
