@@ -158,7 +158,8 @@ variable "config_karpenter" {
   description = "Karpenter Configuration"
 
   type = object({
-    install = optional(bool, true)
+    install             = optional(bool, true)
+    enable_provisioners = optional(bool, true)
   })
 
   default = {}

@@ -39,7 +39,7 @@ locals {
 }
 
 resource "helm_release" "karpenter_provisioners" {
-  count = local.cluster.install && local.config_karpenter.install ? 1 : 0
+  count = local.cluster.install && local.config_karpenter.install && local.config_karpenter.enable_provisioners ? 1 : 0
 
   name       = "karpenter-provisioners"
   namespace  = "karpenter"
