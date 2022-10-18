@@ -15,7 +15,7 @@ module "flux_install" {
 
   depends_on = [
     helm_release.karpenter_provisioners,
-    null_resource.wait_for_scaledown
+    # null_resource.wait_for_scaledown
   ]
 }
 
