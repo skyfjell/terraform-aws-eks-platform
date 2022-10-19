@@ -109,26 +109,19 @@ variable "config_velero" {
 
   type = object({
     existing_id = optional(string)
-    enable      = optional(bool)
+    enable      = optional(bool, true)
     server_side_encryption_configuration = optional(object({
-      type              = optional(string)
+      type              = optional(string, "aws:kms")
       kms_master_key_id = optional(string)
       alias             = optional(string)
-    }))
+    }), {})
 
     service_accounts = optional(object({
-      velero = optional(list(string))
+      velero = optional(list(string), ["velero:velero"])
     }))
   })
 
-  default = {
-    enable = true
-    server_side_encryption_configuration = {
-      type = "aws:kms"
-    }
-    service_accounts = {
-      velero = ["velero:velero"]
-    }
+  default = {}
   }
 
   validation {
