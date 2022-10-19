@@ -122,7 +122,7 @@ variable "config_velero" {
   })
 
   default = {}
-  }
+
 
   validation {
     condition = anytrue([
