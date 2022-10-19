@@ -48,6 +48,8 @@ resource "helm_release" "karpenter_provisioners" {
   values     = [yamlencode({ manifests = local.provisioners })]
 
   depends_on = [
+    aws_iam_instance_profile.karpenter,
+    module.karpenter_irsa,
     helm_release.karpenter,
   ]
 }
