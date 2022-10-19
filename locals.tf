@@ -12,7 +12,7 @@ locals {
   cluster = var.cluster
 
   managed_node_groups = var.managed_node_groups
-  cluster_id          = module.cluster.cluster_id
+  cluster_id          = local.labels.id
 
   users = {
     edit = var.users.edit == null ? [] : var.users.edit,

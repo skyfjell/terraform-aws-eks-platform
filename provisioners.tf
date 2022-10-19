@@ -39,7 +39,8 @@ locals {
 }
 
 resource "helm_release" "karpenter_provisioners" {
-  count = local.cluster.install && local.config_karpenter.install ? 1 : 0
+  # count = local.cluster.install && local.config_karpenter.install ? 1 : 0
+  count = 0
 
   name       = "karpenter-provisioners"
   namespace  = "karpenter"
@@ -48,6 +49,8 @@ resource "helm_release" "karpenter_provisioners" {
   values     = [yamlencode({ manifests = local.provisioners })]
 
   depends_on = [
+    aws_iam_instance_profile.karpenter,
+    module.karpenter_irsa,
     helm_release.karpenter,
   ]
 }
@@ -72,7 +75,8 @@ locals {
 }
 
 locals {
-  cmd = local.cluster.install && local.config_karpenter.install ? { "${local.wait_command}" : null } : {}
+  # cmd = local.cluster.install && local.config_karpenter.install ? { "${local.wait_command}" : null } : {}
+  cmd = {}
 }
 
 resource "null_resource" "wait_for_scaledown" {

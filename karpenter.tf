@@ -6,10 +6,11 @@ resource "aws_iam_instance_profile" "karpenter" {
 }
 
 module "karpenter_irsa" {
-  count = local.cluster.install && local.config_karpenter.install ? 1 : 0
+  # count = local.cluster.install && local.config_karpenter.install ? 1 : 0
+  count = 0
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.4.0"
+  version = "5.5.2"
 
   role_name                          = "karpenter-controller-${local.labels.id}"
   attach_karpenter_controller_policy = true
@@ -25,14 +26,11 @@ module "karpenter_irsa" {
       namespace_service_accounts = ["karpenter:karpenter"]
     }
   }
-
-  depends_on = [
-    aws_iam_instance_profile.karpenter
-  ]
 }
 
 resource "helm_release" "karpenter" {
-  count = local.cluster.install && local.config_karpenter.install ? 1 : 0
+  # count = local.cluster.install && local.config_karpenter.install ? 1 : 0
+  count = 0
 
   namespace        = "karpenter"
   create_namespace = true
@@ -44,7 +42,7 @@ resource "helm_release" "karpenter" {
 
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.karpenter_irsa[0].iam_role_arn
+    value = one(module.karpenter_irsa.*.iam_role_arn)
   }
 
   set {
@@ -59,7 +57,7 @@ resource "helm_release" "karpenter" {
 
   set {
     name  = "aws.defaultInstanceProfile"
-    value = aws_iam_instance_profile.karpenter[0].name
+    value = one(aws_iam_instance_profile.karpenter.*.name)
   }
 
   values = [yamlencode({
@@ -70,6 +68,7 @@ resource "helm_release" "karpenter" {
   })]
 
   depends_on = [
+    aws_iam_instance_profile.karpenter,
     module.karpenter_irsa
   ]
 }
