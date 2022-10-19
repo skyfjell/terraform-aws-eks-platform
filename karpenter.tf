@@ -44,7 +44,7 @@ resource "helm_release" "karpenter" {
 
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.karpenter_irsa[0].iam_role_arn
+    value = one(module.karpenter_irsa.*.iam_role_arn)
   }
 
   set {
@@ -59,7 +59,7 @@ resource "helm_release" "karpenter" {
 
   set {
     name  = "aws.defaultInstanceProfile"
-    value = aws_iam_instance_profile.karpenter[0].name
+    value = one(aws_iam_instance_profile.karpenter.*.name)
   }
 
   values = [yamlencode({
