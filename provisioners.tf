@@ -65,7 +65,7 @@ locals {
       ) != 0 \
     ]];
     do
-      echo "Waiting for karpenter to scale down nodes";
+      echo "Waiting for karpenter to scale down nodes. If this times out, verify there are no orphaned karpenter provisioned nodes in ec2.";
       sleep 5;
     done;
     sleep 3;
