@@ -162,12 +162,10 @@ variable "config_karpenter" {
     Includes:
     - install: Will install the karpenter operator
     - enable_provisioners: Will include the default helm release of the platform-system provisioner CR.
-    - timeout: When tearing down the cluster, timeout (seconds) for waiting for the nodes to be torn down.
   EOT
   type = object({
     install             = optional(bool, true)
     enable_provisioners = optional(bool, true)
-    timeout             = optional(number, 600)
   })
 
   default = {}

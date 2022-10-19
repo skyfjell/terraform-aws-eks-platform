@@ -80,7 +80,7 @@ resource "null_resource" "wait_for_scaledown" {
 
   provisioner "local-exec" {
     when        = destroy
-    interpreter = ["timeout", local.config_karpenter.timeout, "bash", "-c"]
+    interpreter = ["bash", "-c"]
     command     = each.key
   }
 
