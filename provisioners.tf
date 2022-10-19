@@ -55,6 +55,7 @@ resource "helm_release" "karpenter_provisioners" {
 
 locals {
   wait_command = <<EOT
+    
     while [[ $( \
       aws ec2 describe-instances \
       --region ${data.aws_region.current.name} \
@@ -66,7 +67,6 @@ locals {
     do
       sleep 5;
     done;
-
     sleep 3;
   EOT
 }
@@ -75,16 +75,17 @@ locals {
   cmd = local.cluster.install && local.config_karpenter.install ? { "${local.wait_command}" : null } : {}
 }
 
-# resource "null_resource" "wait_for_scaledown" {
-#   for_each = local.cmd
+resource "null_resource" "wait_for_scaledown" {
+  for_each = local.cmd
 
-#   provisioner "local-exec" {
-#     when        = destroy
-#     interpreter = ["bash", "-c"]
-#     command     = each.key
-#   }
+  provisioner "local-exec" {
+    when        = destroy
+    interpreter = ["timeout", local.config_karpenter.timeout, "bash", "-c"]
+    command     = each.key
+  }
 
-#   depends_on = [
-#     helm_release.karpenter_provisioners
-#   ]
-# }
+  depends_on = [
+    helm_release.karpenter_provisioners
+  ]
+
+}
