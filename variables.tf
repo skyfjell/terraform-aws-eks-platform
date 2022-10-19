@@ -122,7 +122,7 @@ variable "config_velero" {
   })
 
   default = {}
-
+  
 
   validation {
     condition = anytrue([
@@ -149,8 +149,7 @@ variable "config_velero" {
 
 variable "config_karpenter" {
   description = <<EOT
-    Karpenter configuration. Karpenter does not handle cleaning itself up gracefully. We 
-    attempt to fix this by using a local-exec to wait, but this is not garunteed to work.
+    Karpenter Configuration - If `wait_for_scaledown` is timing out, identify and remove orphaned nodes in EC2 before re-applying
     
     Includes:
     - install: Will install the karpenter operator
