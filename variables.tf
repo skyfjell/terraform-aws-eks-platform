@@ -149,7 +149,7 @@ variable "config_velero" {
 
 variable "config_karpenter" {
   description = <<EOT
-    Karpenter Configuration - If `wait_for_scaledown` is timing out, identify and remove orphaned nodes in EC2 before re-applying
+    Karpenter Configuration - If `wait_for_scaledown` is timing out, identify and remove orphaned karpenter provisioner nodes for the cluster in EC2 before re-applying
     
     Includes:
     - install: Will install the karpenter operator
