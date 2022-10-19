@@ -32,7 +32,8 @@ module "karpenter_irsa" {
 }
 
 resource "helm_release" "karpenter" {
-  count = local.cluster.install && local.config_karpenter.install ? 1 : 0
+  # count = local.cluster.install && local.config_karpenter.install ? 1 : 0
+  count = 0
 
   namespace        = "karpenter"
   create_namespace = true
