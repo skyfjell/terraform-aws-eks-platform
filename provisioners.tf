@@ -65,6 +65,7 @@ locals {
       ) != 0 \
     ]];
     do
+      echo "Waiting for karpenter to scale down nodes";
       sleep 5;
     done;
     sleep 3;
