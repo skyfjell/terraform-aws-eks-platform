@@ -26,10 +26,6 @@ module "karpenter_irsa" {
       namespace_service_accounts = ["karpenter:karpenter"]
     }
   }
-
-  depends_on = [
-    aws_iam_instance_profile.karpenter
-  ]
 }
 
 resource "helm_release" "karpenter" {
