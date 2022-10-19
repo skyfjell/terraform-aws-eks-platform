@@ -1,6 +1,6 @@
 module "cluster" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "18.29.0"
+  version = "18.30.2"
 
   create                   = local.cluster.install
   cluster_name             = local.labels.id
