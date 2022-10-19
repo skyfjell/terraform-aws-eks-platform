@@ -70,6 +70,7 @@ resource "helm_release" "karpenter" {
   })]
 
   depends_on = [
+    aws_iam_instance_profile.karpenter,
     module.karpenter_irsa
   ]
 }
