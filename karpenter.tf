@@ -7,7 +7,7 @@ resource "aws_iam_instance_profile" "karpenter" {
 
 module "karpenter_irsa" {
   # count = local.cluster.install && local.config_karpenter.install ? 1 : 0
-  count = 0
+  count = 1
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.5.2"
