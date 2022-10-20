@@ -52,7 +52,7 @@ variable "config_dns" {
     service_accounts = optional(object({
       external_dns = optional(list(string), ["external-dns:external-dns"])
       cert_manager = optional(list(string), ["cert-manager:cert-manager"])
-    }))
+    }), {})
   })
 
   default = {}
