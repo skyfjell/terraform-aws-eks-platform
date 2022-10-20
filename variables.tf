@@ -114,7 +114,7 @@ variable "config_velero" {
 
     service_accounts = optional(object({
       velero = optional(list(string), ["velero:velero"])
-      }), {})
+    }), {})
   })
 
   default = {}
