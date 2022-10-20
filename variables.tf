@@ -48,16 +48,15 @@ variable "config_dns" {
   EOT
 
   type = object({
-    hosted_zone_ids = list(string)
+    hosted_zone_ids = optional(list(string), [])
     service_accounts = optional(object({
       external_dns = optional(list(string), ["external-dns:external-dns"])
       cert_manager = optional(list(string), ["cert-manager:cert-manager"])
     }))
   })
 
-  default = {
-    hosted_zone_ids = [],
-  }
+  default = {}
+
 }
 
 variable "config_autoscaler" {
