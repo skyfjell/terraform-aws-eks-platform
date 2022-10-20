@@ -26,7 +26,7 @@ If the cluster has been destroyed, but the run errored out and needed to be re-a
 | <a name="requirement_flux"></a> [flux](#requirement\_flux) | >= 0.12.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | >= 2.2.0, < 3.0.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.1.0, < 3.0.0 |
-| <a name="requirement_tls"></a> [tls](#requirement\_tls) | 3.1.0 |
+| <a name="requirement_tls"></a> [tls](#requirement\_tls) | >= 3.1.0, < 4.0.0 |
 
 ## Providers
 
@@ -41,18 +41,18 @@ If the cluster has been destroyed, but the run errored out and needed to be re-a
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cert_manager_irsa"></a> [cert\_manager\_irsa](#module\_cert\_manager\_irsa) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.4.0 |
-| <a name="module_cluster"></a> [cluster](#module\_cluster) | terraform-aws-modules/eks/aws | 18.29.0 |
-| <a name="module_ebs_csi_irsa_role"></a> [ebs\_csi\_irsa\_role](#module\_ebs\_csi\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.4.0 |
-| <a name="module_external_dns_irsa"></a> [external\_dns\_irsa](#module\_external\_dns\_irsa) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.4.0 |
+| <a name="module_cert_manager_irsa"></a> [cert\_manager\_irsa](#module\_cert\_manager\_irsa) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.5.2 |
+| <a name="module_cluster"></a> [cluster](#module\_cluster) | terraform-aws-modules/eks/aws | 18.30.2 |
+| <a name="module_ebs_csi_irsa_role"></a> [ebs\_csi\_irsa\_role](#module\_ebs\_csi\_irsa\_role) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.5.2 |
+| <a name="module_external_dns_irsa"></a> [external\_dns\_irsa](#module\_external\_dns\_irsa) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.5.2 |
 | <a name="module_flux_git_repository"></a> [flux\_git\_repository](#module\_flux\_git\_repository) | skyfjell/git-repository/flux | 1.0.3 |
 | <a name="module_flux_install"></a> [flux\_install](#module\_flux\_install) | skyfjell/install/flux | 1.0.4 |
 | <a name="module_flux_kustomization"></a> [flux\_kustomization](#module\_flux\_kustomization) | skyfjell/kustomization/flux | 1.0.4 |
-| <a name="module_karpenter_irsa"></a> [karpenter\_irsa](#module\_karpenter\_irsa) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.4.0 |
+| <a name="module_karpenter_irsa"></a> [karpenter\_irsa](#module\_karpenter\_irsa) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.5.2 |
 | <a name="module_platform_edit_iam"></a> [platform\_edit\_iam](#module\_platform\_edit\_iam) | ./modules/cluster-iam | n/a |
 | <a name="module_platform_view_iam"></a> [platform\_view\_iam](#module\_platform\_view\_iam) | ./modules/cluster-iam | n/a |
 | <a name="module_velero_bucket"></a> [velero\_bucket](#module\_velero\_bucket) | skyfjell/s3/aws | 1.0.6 |
-| <a name="module_velero_irsa"></a> [velero\_irsa](#module\_velero\_irsa) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.4.0 |
+| <a name="module_velero_irsa"></a> [velero\_irsa](#module\_velero\_irsa) | terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks | 5.5.2 |
 
 ## Resources
 
