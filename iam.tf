@@ -29,7 +29,7 @@ module "ebs_csi_irsa_role" {
   count = local.cluster.install ? 1 : 0
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.4.0"
+  version = "5.5.2"
 
   role_name = "${local.labels.id}-ebs-csi"
 
@@ -51,7 +51,7 @@ module "cert_manager_irsa" {
   ]) ? 1 : 0
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.4.0"
+  version = "5.5.2"
 
   role_name                     = "${local.labels.id}-cert-manager"
   attach_cert_manager_policy    = true
@@ -73,7 +73,7 @@ module "external_dns_irsa" {
   ]) ? 1 : 0
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.4.0"
+  version = "5.5.2"
 
   role_name                     = "${local.labels.id}-external-dns"
   attach_external_dns_policy    = true
@@ -95,7 +95,7 @@ module "velero_irsa" {
   ]) ? 1 : 0
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.4.0"
+  version = "5.5.2"
 
   role_name             = "${local.labels.id}-velero"
   attach_velero_policy  = true

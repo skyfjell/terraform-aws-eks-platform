@@ -229,7 +229,7 @@ locals {
 
 # TODO: Refactor to use proper kubernetes_[resource] resources.
 resource "helm_release" "rbac" {
-  count      = local.cluster.install ? 1 : 0
+  count      = local.cluster.install && local.cluster.enable_rbac ? 1 : 0
   name       = "rbac"
   repository = "https://skyfjell.github.io/charts"
   chart      = "null"

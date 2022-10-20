@@ -29,8 +29,9 @@ variable "cluster" {
       rolearn  = string,
       groups   = list(string),
     })), [])
-    subnet_ids = list(string)
-    vpc_id     = string
+    subnet_ids  = list(string)
+    vpc_id      = string
+    enable_rbac = optional(bool, true)
   })
 }
 
@@ -108,27 +109,20 @@ variable "config_velero" {
 
   type = object({
     existing_id = optional(string)
-    enable      = optional(bool)
+    enable      = optional(bool, true)
     server_side_encryption_configuration = optional(object({
-      type              = optional(string)
+      type              = optional(string, "aws:kms")
       kms_master_key_id = optional(string)
       alias             = optional(string)
-    }))
+    }), {})
 
     service_accounts = optional(object({
-      velero = optional(list(string))
+      velero = optional(list(string), ["velero:velero"])
     }))
   })
 
-  default = {
-    enable = true
-    server_side_encryption_configuration = {
-      type = "aws:kms"
-    }
-    service_accounts = {
-      velero = ["velero:velero"]
-    }
-  }
+  default = {}
+
 
   validation {
     condition = anytrue([
@@ -154,10 +148,16 @@ variable "config_velero" {
 }
 
 variable "config_karpenter" {
-  description = "Karpenter Configuration"
-
+  description = <<EOT
+    Karpenter Configuration - If `wait_for_scaledown` is timing out, identify and remove orphaned karpenter provisioner nodes for the cluster in EC2 before re-applying
+    
+    Includes:
+    - install: Will install the karpenter operator
+    - enable_provisioners: Will include the default helm release of the platform-system provisioner CR.
+  EOT
   type = object({
-    install = optional(bool, true)
+    install             = optional(bool, true)
+    enable_provisioners = optional(bool, true)
   })
 
   default = {}

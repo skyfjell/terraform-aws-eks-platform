@@ -39,7 +39,7 @@ locals {
 }
 
 resource "helm_release" "karpenter_provisioners" {
-  count = local.cluster.install && local.config_karpenter.install ? 1 : 0
+  count = local.cluster.install && local.config_karpenter.install && local.config_karpenter.enable_provisioners ? 1 : 0
 
   name       = "karpenter-provisioners"
   namespace  = "karpenter"
@@ -55,6 +55,7 @@ resource "helm_release" "karpenter_provisioners" {
 
 locals {
   wait_command = <<EOT
+    
     while [[ $( \
       aws ec2 describe-instances \
       --region ${data.aws_region.current.name} \
@@ -64,9 +65,9 @@ locals {
       ) != 0 \
     ]];
     do
+      echo "Waiting for karpenter to scale down nodes. If this times out, verify there are no orphaned karpenter provisioned nodes in ec2.";
       sleep 5;
     done;
-
     sleep 3;
   EOT
 }
@@ -87,4 +88,5 @@ resource "null_resource" "wait_for_scaledown" {
   depends_on = [
     helm_release.karpenter_provisioners
   ]
+
 }
