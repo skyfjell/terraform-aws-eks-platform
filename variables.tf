@@ -48,20 +48,15 @@ variable "config_dns" {
   EOT
 
   type = object({
-    hosted_zone_ids = list(string)
+    hosted_zone_ids = optional(list(string), [])
     service_accounts = optional(object({
-      external_dns = optional(list(string))
-      cert_manager = optional(list(string))
+      external_dns = optional(list(string), ["external-dns:external-dns"])
+      cert_manager = optional(list(string), ["cert-manager:cert-manager"])
     }))
   })
 
-  default = {
-    hosted_zone_ids = [],
-    service_accounts = {
-      external_dns = ["external-dns:external-dns"]
-      cert_manager = ["cert-manager:cert-manager"]
-    }
-  }
+  default = {}
+
 }
 
 variable "config_autoscaler" {
@@ -118,7 +113,7 @@ variable "config_velero" {
 
     service_accounts = optional(object({
       velero = optional(list(string), ["velero:velero"])
-    }))
+    }), {})
   })
 
   default = {}

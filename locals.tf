@@ -19,11 +19,7 @@ locals {
     view = var.users.view == null ? [] : var.users.view,
   }
 
-  config_dns = merge(var.config_dns, {
-    service_accounts = {
-      external_dns = try(var.config_dns.service_accounts.external-dns, ["external-dns:external-dns"])
-      cert_manager = try(var.config_dns.service_accounts.cert_manager, ["cert-manager:cert-manager"])
-  } })
+  config_dns = var.config_dns
 
   # Services and Applications
   config_autoscaler = var.config_autoscaler
