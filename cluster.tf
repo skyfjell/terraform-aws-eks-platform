@@ -20,13 +20,13 @@ module "cluster" {
 
   eks_managed_node_groups = local.cluster.install ? {
     default = {
-      instance_types                        = ["t3.medium"]
+      instance_types                        = ["t3.small"]
       create_security_group                 = false
       attach_cluster_primary_security_group = true
 
-      min_size     = 1
-      max_size     = 1
-      desired_size = 1
+      min_size     = 2
+      max_size     = 2
+      desired_size = 2
 
       iam_role_additional_policies = [
         # Required by Karpenter
