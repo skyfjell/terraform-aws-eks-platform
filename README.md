@@ -6,9 +6,11 @@ Gracefully set up(and tear down) EKS clusters with optional enhancements such as
 
 ### Destruction
 
-In order to properly destroy the cluster, you must set `install = false` and `destroy = true`.
+In order to properly destroy the cluster, you will need to make three applies.
 
-This toggles the output for auth from the cluster resource output to `aws_eks_cluster` and `aws_eks_cluster_auth` data sources.
+1. Set `config_flux { install = false }` and let all apps come down and watch karpenter nodes. Manual deletion might be required of ec2. Apply
+2. Set `config_karpenter { install = false }`, `config_velero { enable = true }`, `cluster { enable_rbac = false }` or whatever other components are installed to false. Apply
+3. Set `cluster { install = false, destroy = true }`. Apply
 
 ### `Error: error reading EKS Cluster (<...>): couldn't find resource`
 
