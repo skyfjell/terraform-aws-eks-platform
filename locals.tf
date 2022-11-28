@@ -11,8 +11,8 @@ locals {
   # Cluster Config
   cluster = var.cluster
 
-  managed_node_groups = var.managed_node_groups
-  cluster_id          = module.cluster.cluster_id
+  # managed_node_groups = var.managed_node_groups
+  cluster_id = module.cluster.cluster_id
 
   users = {
     edit = var.users.edit == null ? [] : var.users.edit,
