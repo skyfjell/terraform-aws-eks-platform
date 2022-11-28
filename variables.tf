@@ -18,7 +18,19 @@ variable "users" {
 }
 
 variable "cluster" {
-  description = "Cluster Configuration"
+  description = <<EOT
+  Configuration of cluster variables.
+
+  Includes:
+    - install: Pass through to terraform-aws-modules/eks/aws.
+    - destroy: Will tear down cluster dependencies. See README for teardown instructions
+    - version: K8s cluster version
+    - aws_auth_roles: Additional roles to pass to terraform-aws-modules/eks/aws
+    - subnet_ids: Pass through to terraform-aws-modules/eks/aws
+    - vpc_id: Pass through to terraform-aws-modules/eks/aws
+    - enable_rbac: Enables RBAC helm release of cluster roles for view and edit abilities.
+    - node_groups: Partial pass through to terraform-aws-modules/eks/aws. Only support default instance_types.
+  EOT
 
   type = object({
     install = optional(bool, true)
@@ -32,14 +44,21 @@ variable "cluster" {
     subnet_ids  = list(string)
     vpc_id      = string
     enable_rbac = optional(bool, true)
+    managed_node_groups = optional(
+      object({
+        default = object({
+          instance_types = optional(list(string))
+        })
+      }),
+      {
+        default = {
+          instance_types = ["t3.medium"]
+        }
+      }
+    )
   })
 }
 
-variable "managed_node_groups" {
-  description = "EKS Managed Node Groups"
-  type        = map(object({}))
-  default     = {}
-}
 
 variable "config_dns" {
   description = <<EOT
@@ -149,10 +168,12 @@ variable "config_karpenter" {
     Includes:
     - install: Will install the karpenter operator
     - enable_provisioners: Will include the default helm release of the platform-system provisioner CR.
+    - additionalValues: Key,values passed to helm release via `{set {name = key, value=value} for k,value in additionalValues}`
   EOT
   type = object({
     install             = optional(bool, true)
     enable_provisioners = optional(bool, true)
+    additionalValues    = optional(map(any), {})
   })
 
   default = {}

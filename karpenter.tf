@@ -48,18 +48,26 @@ resource "helm_release" "karpenter" {
   }
 
   set {
-    name  = "clusterName"
+    name  = "settings.aws.clusterName"
     value = module.cluster.cluster_id
   }
 
   set {
-    name  = "clusterEndpoint"
+    name  = "settings.aws.clusterEndpoint"
     value = module.cluster.cluster_endpoint
   }
 
   set {
-    name  = "aws.defaultInstanceProfile"
+    name  = "settings.aws.defaultInstanceProfile"
     value = aws_iam_instance_profile.karpenter[0].name
+  }
+
+  dynamic "set" {
+    for_each = local.config_karpenter.additionalValues
+    content {
+      name  = set.key
+      value = set.value
+    }
   }
 
   values = [yamlencode({
