@@ -44,22 +44,21 @@ variable "cluster" {
     subnet_ids  = list(string)
     vpc_id      = string
     enable_rbac = optional(bool, true)
-    node_groups = optional(map(object({ instance_types = optional(list(string)) })),
+    managed_node_groups = optional(
+      object({
+        default = object({
+          instance_types = optional(list(string))
+        })
+      }),
       {
-        "default" = {
+        default = {
           instance_types = ["t3.medium"]
         }
-    })
-
+      }
+    )
   })
 }
 
-# TODO: Expand support
-# variable "managed_node_groups" {
-#   description = "EKS Managed Node Groups"
-#   type        = map(object({}))
-#   default     = {}
-# }
 
 variable "config_dns" {
   description = <<EOT

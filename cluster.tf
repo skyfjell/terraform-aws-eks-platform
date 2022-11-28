@@ -20,7 +20,7 @@ module "cluster" {
 
   eks_managed_node_groups = local.cluster.install ? {
     default = {
-      instance_types                        = local.cluster["default"].instance_types
+      instance_types                        = local.cluster.managed_node_groups.default.instance_types
       create_security_group                 = false
       attach_cluster_primary_security_group = true
 
