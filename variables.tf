@@ -149,10 +149,14 @@ variable "config_karpenter" {
     Includes:
     - install: Will install the karpenter operator
     - enable_provisioners: Will include the default helm release of the platform-system provisioner CR.
+    - additionalValues: Key,values passed to helm release via `{set {name = key, value=value} for k,value in additionalValues}`
+    - instance_type: The default node group (min=max=2) that is created for karpenter.
   EOT
   type = object({
     install             = optional(bool, true)
     enable_provisioners = optional(bool, true)
+    additionalValues    = optional(map(any), {})
+    instance_type       = optional(string, "t3.medium")
   })
 
   default = {}
