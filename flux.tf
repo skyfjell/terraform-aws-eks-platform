@@ -7,11 +7,12 @@ module "flux_install" {
   count = local.install_flux ? 1 : 0
 
   source  = "skyfjell/install/flux"
-  version = "1.0.4"
+  version = "1.0.5"
 
   name = local.labels.id
 
   node_selector = { "skyfjell.io/node-selector" : "platform-system" }
+  chart_version = local.config_flux.chart_version
 
   depends_on = [
     helm_release.karpenter_provisioners,

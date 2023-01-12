@@ -95,7 +95,8 @@ variable "config_flux" {
   description = "Flux Configuration"
 
   type = object({
-    install = optional(bool, true)
+    install       = optional(bool, true)
+    chart_version = optional(string, "2.3.0")
     git = object({
       name            = optional(string, "platform-system-init"),
       url             = string,
