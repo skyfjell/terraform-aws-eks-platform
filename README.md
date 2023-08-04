@@ -23,7 +23,7 @@ If the cluster has been destroyed, but the run errored out and needed to be re-a
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.47 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.47, < 6.0.0 |
 | <a name="requirement_awsutils"></a> [awsutils](#requirement\_awsutils) | >= 0.11.0, < 1.0.0 |
 | <a name="requirement_flux"></a> [flux](#requirement\_flux) | >= 0.12.0 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | >= 2.2.0, < 3.0.0 |
