@@ -18,7 +18,7 @@ terraform {
     }
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 4.47"
+      version = ">= 4.47, < 6.0.0"
     }
     awsutils = {
       source  = "cloudposse/awsutils"
