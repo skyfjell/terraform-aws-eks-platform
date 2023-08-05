@@ -1,6 +1,6 @@
 module "labels" {
   source  = "skyfjell/label/null"
-  version = "1.0.1"
+  version = "1.0.2"
 
   environment = "stage"
   name        = "ex"

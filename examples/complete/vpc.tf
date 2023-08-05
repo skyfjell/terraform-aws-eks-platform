@@ -1,6 +1,6 @@
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = ">= 3.2.0, < 4.0.0"
+  version = ">= 4.0.0, < 5.0.0"
 
   name = module.labels.id
 

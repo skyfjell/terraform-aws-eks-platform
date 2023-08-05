@@ -7,7 +7,7 @@ module "flux_install" {
   count = local.install_flux ? 1 : 0
 
   source  = "skyfjell/install/flux"
-  version = "1.0.5"
+  version = "~> 1.0.5"
 
   name = local.labels.id
 
@@ -24,7 +24,7 @@ module "flux_git_repository" {
   count = local.install_flux ? 1 : 0
 
   source  = "skyfjell/git-repository/flux"
-  version = "1.0.3"
+  version = "~> 1.0.3"
 
   url             = local.config_flux.git.url
   interval        = "1m"
@@ -41,7 +41,7 @@ module "flux_kustomization" {
   count = local.install_flux ? 1 : 0
 
   source  = "skyfjell/kustomization/flux"
-  version = "1.0.4"
+  version = "~> 1.0.4"
 
   name = local.config_flux.git.name
   path = local.config_flux.git.path

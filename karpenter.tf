@@ -9,7 +9,7 @@ module "karpenter_irsa" {
   count = local.cluster.install && local.config_karpenter.install ? 1 : 0
 
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.5.2"
+  version = ">= 5.5.2, < 6.0.0"
 
   role_name                          = "karpenter-controller-${local.labels.id}"
   attach_karpenter_controller_policy = true
@@ -40,7 +40,7 @@ resource "helm_release" "karpenter" {
   name       = "karpenter"
   repository = "oci://public.ecr.aws/karpenter"
   chart      = "karpenter"
-  version    = "v0.19.1"
+  version    = "v0.29.2"
 
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
@@ -55,6 +55,11 @@ resource "helm_release" "karpenter" {
   set {
     name  = "settings.aws.clusterEndpoint"
     value = module.cluster.cluster_endpoint
+  }
+
+  set {
+    name  = "settings.aws.interruptionQueueName"
+    value = module.cluster.cluster_id
   }
 
   set {
