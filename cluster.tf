@@ -28,10 +28,11 @@ module "cluster" {
       max_size     = 2
       desired_size = 2
 
-      iam_role_additional_policies = [
+      iam_role_additional_policies = {
         # Required by Karpenter
-        "arn:${local.partition}:iam::aws:policy/AmazonSSMManagedInstanceCore"
-      ]
+        karpenter = "arn:${local.partition}:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      }
+
       taints = [
         {
           "key" : "CriticalAddonsOnly",
