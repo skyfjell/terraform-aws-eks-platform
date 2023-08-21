@@ -62,7 +62,6 @@ resource "helm_release" "karpenter" {
     name  = "settings.aws.clusterEndpoint"
     value = module.cluster.cluster_endpoint
   }
-
   set {
     name  = "controller.resources.requests.cpu"
     value = 1
@@ -79,12 +78,6 @@ resource "helm_release" "karpenter" {
     name  = "controller.resources.limits.memory"
     value = "1Gi"
   }
-
-
-
-
-
-
 
   dynamic "set" {
     for_each = local.config_karpenter.additionalValues
