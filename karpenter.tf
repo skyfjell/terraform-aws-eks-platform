@@ -14,7 +14,7 @@ module "karpenter_irsa" {
   role_name                          = "karpenter-controller-${local.labels.id}"
   attach_karpenter_controller_policy = true
 
-  karpenter_controller_cluster_name = local.labels.id
+  karpenter_controller_cluster_name = module.cluster.cluster_name
   karpenter_controller_node_iam_role_arns = [
     module.cluster.eks_managed_node_groups["default"].iam_role_arn
   ]
