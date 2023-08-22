@@ -11,7 +11,7 @@ locals {
   # Cluster Config
   cluster = var.cluster
 
-  cluster_id = module.cluster.cluster_id
+  cluster_name = module.cluster.cluster_name
 
   users = {
     edit = var.users.edit == null ? [] : var.users.edit,

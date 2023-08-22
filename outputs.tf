@@ -6,8 +6,8 @@ output "assume_policy" {
 output "cluster" {
   description = "Ouput from terraform-aws-eks cluster module"
   value = {
-    id = try(
-      module.cluster.cluster_id,
+    name = try(
+      module.cluster.cluster_name,
       null
     ),
     destroy = local.cluster.destroy,

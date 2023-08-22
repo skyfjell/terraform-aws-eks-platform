@@ -14,13 +14,13 @@ module "karpenter_irsa" {
   role_name                          = "karpenter-controller-${local.labels.id}"
   attach_karpenter_controller_policy = true
 
-  karpenter_controller_cluster_id = module.cluster.cluster_id
+  karpenter_controller_cluster_name = module.cluster.cluster_name
   karpenter_controller_node_iam_role_arns = [
     module.cluster.eks_managed_node_groups["default"].iam_role_arn
   ]
 
   oidc_providers = {
-    ex = {
+    main = {
       provider_arn               = module.cluster.oidc_provider_arn
       namespace_service_accounts = ["karpenter:karpenter"]
     }
@@ -46,25 +46,37 @@ resource "helm_release" "karpenter" {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
     value = module.karpenter_irsa[0].iam_role_arn
   }
-
   set {
     name  = "settings.aws.clusterName"
-    value = module.cluster.cluster_id
+    value = module.cluster.cluster_name
   }
-
+  set {
+    name  = "settings.aws.defaultInstanceProfile"
+    value = aws_iam_instance_profile.karpenter[0].name
+  }
+  set {
+    name  = "settings.aws.interruptionQueueName"
+    value = module.cluster.cluster_name
+  }
   set {
     name  = "settings.aws.clusterEndpoint"
     value = module.cluster.cluster_endpoint
   }
-
   set {
-    name  = "settings.aws.interruptionQueueName"
-    value = module.cluster.cluster_id
+    name  = "controller.resources.requests.cpu"
+    value = 1
   }
-
   set {
-    name  = "settings.aws.defaultInstanceProfile"
-    value = aws_iam_instance_profile.karpenter[0].name
+    name  = "controller.resources.limits.cpu"
+    value = 1
+  }
+  set {
+    name  = "controller.resources.requests.memory"
+    value = "1Gi"
+  }
+  set {
+    name  = "controller.resources.limits.memory"
+    value = "1Gi"
   }
 
   dynamic "set" {
