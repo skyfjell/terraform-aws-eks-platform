@@ -37,7 +37,14 @@ locals {
     )
   })
 
-  config_karpenter = var.config_karpenter
+  config_karpenter = merge(var.config_karpenter, {
+    additionalValues = {
+      "controller.resources.limits.memory"   = try(var.config_karpenter.additionalValues["controller.resources.limits.memory"], "1Gi")
+      "controller.resources.requests.memory" = try(var.config_karpenter.additionalValues["controller.resources.requests.memory"], "1Gi")
+      "controller.resources.limits.cpu"      = try(var.config_karpenter.additionalValues["controller.resources.limits.cpu"], "1000m")
+      "controller.resources.requests.cpu"    = try(var.config_karpenter.additionalValues["controller.resources.requests.cpu"], "1000m")
+    }
+  })
 
   partition = data.aws_partition.current.partition
 }

@@ -8,12 +8,16 @@ module "cluster" {
   enable_irsa              = true
   iam_role_use_name_prefix = false
   create_kms_key           = true
+  vpc_id                   = local.cluster.vpc_id
+  subnet_ids               = local.cluster.subnet_ids
 
   # Bug tracker: https://github.com/terraform-aws-modules/terraform-aws-eks/issues/2169
-  kms_key_enable_default_policy = true
+  kms_key_enable_default_policy  = true
+  cluster_endpoint_public_access = true
 
-  vpc_id     = local.cluster.vpc_id
-  subnet_ids = local.cluster.subnet_ids
+
+
+
   node_security_group_tags = {
     "kubernetes.io/cluster/${local.labels.id}" = null
   }
@@ -24,9 +28,9 @@ module "cluster" {
       create_security_group                 = false
       attach_cluster_primary_security_group = true
 
-      min_size     = 2
-      max_size     = 2
-      desired_size = 2
+      min_size     = local.config_karpenter.replicas
+      max_size     = local.config_karpenter.replicas
+      desired_size = local.config_karpenter.replicas
 
       iam_role_additional_policies = {
         # Required by Karpenter
