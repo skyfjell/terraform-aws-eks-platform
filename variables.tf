@@ -173,6 +173,7 @@ variable "config_karpenter" {
   EOT
   type = object({
     install             = optional(bool, true)
+    replicas            = optional(number, 2)
     enable_provisioners = optional(bool, true)
     additionalValues    = optional(map(any), {})
   })

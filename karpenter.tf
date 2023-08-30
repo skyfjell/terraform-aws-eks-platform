@@ -63,20 +63,8 @@ resource "helm_release" "karpenter" {
     value = module.cluster.cluster_endpoint
   }
   set {
-    name  = "controller.resources.requests.cpu"
-    value = 1
-  }
-  set {
-    name  = "controller.resources.limits.cpu"
-    value = 1
-  }
-  set {
-    name  = "controller.resources.requests.memory"
-    value = "1Gi"
-  }
-  set {
-    name  = "controller.resources.limits.memory"
-    value = "1Gi"
+    name  = "replicas"
+    value = local.config_karpenter.replicas
   }
 
   dynamic "set" {
